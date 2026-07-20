@@ -23,7 +23,7 @@ and visually consistent from day one.
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Project setup, navigation, auth shell, dashboard, theme | ✅ scaffolded |
-| 2 | Workout system (plans, tracking, PRs, history) | ⏳ not started |
+| 2 | Workout system (plans, tracking, PRs, history) | ✅ local-first (Supabase sync pending) |
 | 3 | Nutrition + shopping | ⏳ not started |
 | 4 | Progress tracking, charts, photos | ⏳ not started |
 | 5 | AI Coach | ⏳ not started |
@@ -58,6 +58,21 @@ src/
 supabase/
   README.md            Schema plan + RLS notes for the Supabase backend
 ```
+
+## Workout system (Phase 2)
+
+Fully functional and local-first — works offline with no backend required,
+persisted on-device via AsyncStorage (through a Zustand store), ready to be
+layered with Supabase sync later without screen-level changes.
+
+- Start a workout from a split (PPL / Upper-Lower / Full Body / Custom)
+- Add exercises from an 18-exercise seed library (`src/data/exercises.ts`),
+  searchable by name or muscle group
+- Log sets (weight × reps), mark sets complete, remove sets
+- Estimated 1RM per set (Epley formula) and total session volume, live
+- Personal records computed across all workout history
+  (`src/lib/training.ts::computePRs`)
+- Workout history list with per-session volume and date
 
 ## Design philosophy
 
