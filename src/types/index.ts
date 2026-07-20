@@ -64,6 +64,12 @@ export interface NutritionLog {
   waterMl: number;
 }
 
+export interface MealIngredient {
+  name: string;
+  quantity: string; // free text, e.g. "200g" or "2"
+  category: string; // e.g. Produce, Protein, Dairy, Pantry, Other
+}
+
 export interface Meal {
   id: string;
   userId: string;
@@ -73,6 +79,13 @@ export interface Meal {
   carbsG: number;
   fatG: number;
   isFavourite: boolean;
+  ingredients: MealIngredient[];
+}
+
+export interface PlannedMeal {
+  id: string;
+  date: string; // YYYY-MM-DD
+  mealId: string;
 }
 
 export interface ShoppingListItem {

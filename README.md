@@ -24,7 +24,7 @@ and visually consistent from day one.
 |---|---|---|
 | 1 | Project setup, navigation, auth shell, dashboard, theme | ✅ scaffolded |
 | 2 | Workout system (plans, tracking, PRs, history) | ✅ local-first (Supabase sync pending) |
-| 3 | Nutrition + shopping | ⏳ not started |
+| 3 | Nutrition + shopping | ✅ local-first (Supabase sync pending) |
 | 4 | Progress tracking, charts, photos | ⏳ not started |
 | 5 | AI Coach | ⏳ not started |
 | 6 | Testing, optimisation, TestFlight, App Store prep | ⏳ not started |
@@ -73,6 +73,18 @@ layered with Supabase sync later without screen-level changes.
 - Personal records computed across all workout history
   (`src/lib/training.ts::computePRs`)
 - Workout history list with per-session volume and date
+
+## Nutrition + Shopping (Phase 3)
+
+Also local-first via Zustand + AsyncStorage.
+
+- Daily macro/water logging against default targets, with live progress bars
+- Saved meals with full macros + optional ingredient list (for shopping list
+  generation), favouriting, and one-tap quick-log
+- Simple meal planner: assign saved meals to today (extendable to full week)
+- Shopping list auto-generated from the coming week's planned meals —
+  ingredients merged and grouped by category (Produce/Protein/Dairy/Pantry/
+  Frozen/Other), with tick-off and manual item entry
 
 ## Design philosophy
 
