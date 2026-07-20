@@ -1,4 +1,5 @@
-import { Pressable, Text, PressableProps, ActivityIndicator } from "react-native";
+import { useState } from "react";
+import { Pressable, Text, PressableProps, ActivityIndicator, StyleSheet } from "react-native";
 import { colors } from "@/theme/tokens";
 
 interface ButtonProps extends PressableProps {
@@ -7,7 +8,13 @@ interface ButtonProps extends PressableProps {
   loading?: boolean;
 }
 
-export function Button({ label, variant = "primary", loading, disabled, ...rest }: ButtonProps) {
+// Deliberately avoids Pressable's function-as-style prop and relies on a
+// plain style object + local pressed state instead. The callback style form
+// (style={({ pressed }) => ({...})}) was silently failing to paint a
+// background under RN 0.81 / New Architecture in this project, leaving
+// buttons invisible (though still present and tappable) — this is the fix.
+export function Button({ label, variant = "primary", loading, disabled, onPressIn, onPressOut, style, ...rest }: ButtonProps) {
+  const [pressed, setPressed] = useState(false);
   const isOutline = variant === "outline";
   const isDanger = variant === "danger";
 
@@ -18,17 +25,23 @@ export function Button({ label, variant = "primary", loading, disabled, ...rest 
   return (
     <Pressable
       disabled={disabled || loading}
-      style={({ pressed }) => ({
-        backgroundColor,
-        borderWidth: isOutline ? 1 : 0,
-        borderColor,
-        borderRadius: 999,
-        paddingVertical: 14,
-        alignItems: "center",
-        minHeight: 48,
-        justifyContent: "center",
-        opacity: pressed || disabled ? 0.7 : 1,
-      })}
+      onPressIn={(e) => {
+        setPressed(true);
+        onPressIn?.(e);
+      }}
+      onPressOut={(e) => {
+        setPressed(false);
+        onPressOut?.(e);
+      }}
+      style={[
+        styles.base,
+        {
+          backgroundColor,
+          borderWidth: isOutline ? 1 : 0,
+          borderColor,
+          opacity: pressed || disabled ? 0.7 : 1,
+        },
+      ]}
       {...rest}
     >
       {loading ? (
@@ -39,3 +52,14 @@ export function Button({ label, variant = "primary", loading, disabled, ...rest 
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  base: {
+    borderRadius: 999,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
+    width: "100%",
+  },
+});
