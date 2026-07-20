@@ -35,6 +35,32 @@ export interface ExercisePR {
   achievedInWorkoutId: string | null;
 }
 
+// Consecutive-day streak of completed workouts, counting back from today.
+// A rest day breaks the chain unless today itself has no workout yet (in
+// which case we still count yesterday's chain so the streak doesn't zero
+// out the moment the clock ticks past midnight).
+export function computeWorkoutStreak(workouts: Workout[]): number {
+  const completedDates = new Set(
+    workouts.filter((w) => w.completedAt).map((w) => w.completedAt!.slice(0, 10))
+  );
+
+  let streak = 0;
+  const cursor = new Date();
+
+  // If today has no completed workout yet, start counting from yesterday.
+  const todayKey = cursor.toISOString().slice(0, 10);
+  if (!completedDates.has(todayKey)) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  while (completedDates.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}
+
 export function computePRs(workouts: Workout[]): Record<string, ExercisePR> {
   const prs: Record<string, ExercisePR> = {};
 

@@ -25,7 +25,7 @@ and visually consistent from day one.
 | 1 | Project setup, navigation, auth shell, dashboard, theme | ✅ scaffolded |
 | 2 | Workout system (plans, tracking, PRs, history) | ✅ local-first (Supabase sync pending) |
 | 3 | Nutrition + shopping | ✅ local-first (Supabase sync pending) |
-| 4 | Progress tracking, charts, photos | ⏳ not started |
+| 4 | Progress tracking, charts, photos | ✅ local-first (Supabase sync pending) |
 | 5 | AI Coach | ⏳ not started |
 | 6 | Testing, optimisation, TestFlight, App Store prep | ⏳ not started |
 
@@ -85,6 +85,20 @@ Also local-first via Zustand + AsyncStorage.
 - Shopping list auto-generated from the coming week's planned meals —
   ingredients merged and grouped by category (Produce/Protein/Dairy/Pantry/
   Frozen/Other), with tick-off and manual item entry
+
+## Progress Tracking (Phase 4)
+
+Also local-first via Zustand + AsyncStorage.
+
+- Body measurement logging (weight, chest, waist, arms, legs, shoulders),
+  one entry per date, replacing same-day entries rather than duplicating
+- Weight trend chart (Victory Native) shared between Dashboard and Progress
+- Strength section pulls live 1RM PRs from workout history — no duplicate
+  data entry between Workouts and Progress
+- Progress photos via device camera (front/side/back), stored as local file
+  URIs pending Supabase Storage upload wiring
+- Dashboard now pulls real data throughout: today's workout, macro/water
+  totals, live workout streak, and latest weight — no more placeholders
 
 ## Design philosophy
 
