@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Workout, WorkoutSet, WorkoutSplit, PlannedExercise } from "@/types";
+import { Workout, WorkoutSet, WorkoutSplit, PlannedExercise, SetType } from "@/types";
 
 // Local-first workout store. This is intentionally the source of truth
 // on-device; Phase-later work can add a Supabase sync layer that reads from
@@ -25,7 +25,18 @@ interface WorkoutStore {
   updateWorkoutNotes: (workoutId: string, notes: string) => void;
   completeWorkout: (workoutId: string) => void;
 
-  addSet: (workoutId: string, input: { exerciseId: string; reps: number; weightKg: number; rpe?: number | null }) => void;
+  addSet: (
+    workoutId: string,
+    input: {
+      exerciseId: string;
+      reps: number;
+      weightKg: number;
+      rpe?: number | null;
+      tempo?: string | null;
+      setType?: SetType;
+      supersetGroupId?: string | null;
+    }
+  ) => void;
   updateSet: (workoutId: string, setId: string, patch: Partial<Omit<WorkoutSet, "id">>) => void;
   toggleSetComplete: (workoutId: string, setId: string) => void;
   removeSet: (workoutId: string, setId: string) => void;
@@ -44,6 +55,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
           name,
           split,
           scheduledFor,
+          startedAt: new Date().toISOString(),
           completedAt: null,
           sets: [],
           notes: null,
@@ -78,6 +90,9 @@ export const useWorkoutStore = create<WorkoutStore>()(
           reps: input.reps,
           weightKg: input.weightKg,
           rpe: input.rpe ?? null,
+          tempo: input.tempo ?? null,
+          setType: input.setType ?? "working",
+          supersetGroupId: input.supersetGroupId ?? null,
           completedAt: null,
         };
         set((state) => ({
@@ -128,7 +143,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
     {
       name: "rm-fitness-workouts",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState) => {
         const state = persistedState as WorkoutStore;
         return {
@@ -136,6 +151,13 @@ export const useWorkoutStore = create<WorkoutStore>()(
           workouts: (state.workouts ?? []).map((w) => ({
             ...w,
             plannedExercises: w.plannedExercises ?? [],
+            startedAt: w.startedAt ?? w.completedAt ?? null,
+            sets: w.sets.map((s) => ({
+              ...s,
+              tempo: s.tempo ?? null,
+              setType: s.setType ?? "working",
+              supersetGroupId: s.supersetGroupId ?? null,
+            })),
           })),
         };
       },

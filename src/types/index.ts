@@ -32,12 +32,17 @@ export interface Exercise {
   imageUrl: string | null;
 }
 
+export type SetType = "warmup" | "working" | "dropset" | "failure" | "restpause";
+
 export interface WorkoutSet {
   id: string;
   exerciseId: string;
   reps: number;
   weightKg: number;
   rpe: number | null;
+  tempo: string | null; // e.g. "3-1-1-0" (eccentric-pause-concentric-pause)
+  setType: SetType;
+  supersetGroupId: string | null;
   completedAt: string | null;
 }
 
@@ -53,6 +58,7 @@ export interface Workout {
   name: string;
   split: WorkoutSplit;
   scheduledFor: string | null;
+  startedAt: string | null;
   completedAt: string | null;
   sets: WorkoutSet[];
   notes: string | null;
@@ -68,6 +74,8 @@ export interface NutritionLog {
   carbsG: number;
   fatG: number;
   fibreG: number;
+  sugarG: number;
+  saltG: number;
   waterMl: number;
 }
 
@@ -88,8 +96,11 @@ export interface Meal {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  sugarG: number;
+  saltG: number;
   isFavourite: boolean;
   ingredients: MealIngredient[];
+  recipeInstructions: string | null;
 }
 
 export interface PlannedMeal {
@@ -121,6 +132,7 @@ export interface BodyMeasurement {
   userId: string;
   date: string;
   weightKg: number | null;
+  bodyFatPct: number | null;
   chestCm: number | null;
   waistCm: number | null;
   armsCm: number | null;

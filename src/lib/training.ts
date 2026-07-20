@@ -61,7 +61,50 @@ export function computeWorkoutStreak(workouts: Workout[]): number {
   return streak;
 }
 
-export function computePRs(workouts: Workout[]): Record<string, ExercisePR> {
+export interface WorkoutSummary {
+  durationMinutes: number | null;
+  estimatedCalories: number | null;
+  volumeKg: number;
+  exercisesCompleted: number;
+  muscleGroupsTrained: string[];
+  prExerciseIds: string[];
+}
+
+// Called with the completed workout plus every OTHER workout (so "PR"
+// means genuinely the best this exercise has ever seen, not just today).
+export function computeWorkoutSummary(workout: Workout, priorWorkouts: Workout[]): WorkoutSummary {
+  let durationMinutes: number | null = null;
+  if (workout.startedAt && workout.completedAt) {
+    const ms = new Date(workout.completedAt).getTime() - new Date(workout.startedAt).getTime();
+    durationMinutes = Math.max(1, Math.round(ms / 60000));
+  }
+
+  // Rough estimate: ~6 kcal/min for moderate-intensity resistance training.
+  const estimatedCalories = durationMinutes != null ? Math.round(durationMinutes * 6) : null;
+
+  const volumeKg = workoutVolume(workout);
+  const exerciseIds = Array.from(new Set(workout.sets.map((s) => s.exerciseId)));
+
+  const priorPRs = computePRs(priorWorkouts);
+  const prExerciseIds = exerciseIds.filter((exId) => {
+    const bestToday = bestSetByEstimated1RM(workout.sets.filter((s) => s.exerciseId === exId));
+    if (!bestToday) return false;
+    const todayEst = estimateOneRepMax(bestToday.weightKg, bestToday.reps);
+    const priorBest = priorPRs[exId]?.bestEstimated1RM ?? 0;
+    return todayEst > priorBest;
+  });
+
+  return {
+    durationMinutes,
+    estimatedCalories,
+    volumeKg,
+    exercisesCompleted: exerciseIds.length,
+    muscleGroupsTrained: [], // filled in by caller with exercise lookup (avoids circular import)
+    prExerciseIds,
+  };
+}
+
+
   const prs: Record<string, ExercisePR> = {};
 
   for (const workout of workouts) {
