@@ -105,6 +105,7 @@ export function computeWorkoutSummary(workout: Workout, priorWorkouts: Workout[]
 }
 
 
+export function computePRs(workouts: Workout[]): Record<string, ExercisePR> {
   const prs: Record<string, ExercisePR> = {};
 
   for (const workout of workouts) {
