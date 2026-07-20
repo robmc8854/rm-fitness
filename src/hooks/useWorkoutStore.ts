@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Workout, WorkoutSet, WorkoutSplit } from "@/types";
+import { Workout, WorkoutSet, WorkoutSplit, PlannedExercise } from "@/types";
 
 // Local-first workout store. This is intentionally the source of truth
 // on-device; Phase-later work can add a Supabase sync layer that reads from
@@ -15,7 +15,12 @@ function generateId(): string {
 interface WorkoutStore {
   workouts: Workout[];
 
-  createWorkout: (input: { name: string; split: WorkoutSplit; scheduledFor?: string | null }) => string;
+  createWorkout: (input: {
+    name: string;
+    split: WorkoutSplit;
+    scheduledFor?: string | null;
+    plannedExercises?: PlannedExercise[];
+  }) => string;
   deleteWorkout: (workoutId: string) => void;
   updateWorkoutNotes: (workoutId: string, notes: string) => void;
   completeWorkout: (workoutId: string) => void;
@@ -31,7 +36,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
     (set, get) => ({
       workouts: [],
 
-      createWorkout: ({ name, split, scheduledFor = null }) => {
+      createWorkout: ({ name, split, scheduledFor = null, plannedExercises = [] }) => {
         const id = generateId();
         const workout: Workout = {
           id,
@@ -42,6 +47,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
           completedAt: null,
           sets: [],
           notes: null,
+          plannedExercises,
         };
         set((state) => ({ workouts: [workout, ...state.workouts] }));
         return id;
@@ -122,6 +128,17 @@ export const useWorkoutStore = create<WorkoutStore>()(
     {
       name: "rm-fitness-workouts",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as WorkoutStore;
+        return {
+          ...state,
+          workouts: (state.workouts ?? []).map((w) => ({
+            ...w,
+            plannedExercises: w.plannedExercises ?? [],
+          })),
+        };
+      },
     }
   )
 );

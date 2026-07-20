@@ -41,6 +41,12 @@ export interface WorkoutSet {
   completedAt: string | null;
 }
 
+export interface PlannedExercise {
+  exerciseId: string;
+  targetSets: number;
+  targetReps: string;
+}
+
 export interface Workout {
   id: string;
   userId: string;
@@ -50,6 +56,7 @@ export interface Workout {
   completedAt: string | null;
   sets: WorkoutSet[];
   notes: string | null;
+  plannedExercises: PlannedExercise[];
 }
 
 export interface NutritionLog {

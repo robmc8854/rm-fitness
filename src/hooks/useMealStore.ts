@@ -2,9 +2,30 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Meal, MealIngredient, PlannedMeal } from "@/types";
+import { MEAL_LIBRARY } from "@/data/mealLibrary";
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+const DEFAULT_FAVOURITE_IDS = new Set([
+  "lib-chicken-rice-bowl",
+  "lib-protein-oats",
+  "lib-greek-yogurt-bowl",
+]);
+
+function defaultMeals(): Meal[] {
+  return MEAL_LIBRARY.map((m) => ({
+    id: m.id,
+    userId: "local",
+    name: m.name,
+    calories: m.calories,
+    proteinG: m.proteinG,
+    carbsG: m.carbsG,
+    fatG: m.fatG,
+    isFavourite: DEFAULT_FAVOURITE_IDS.has(m.id),
+    ingredients: m.ingredients,
+  }));
 }
 
 interface MealStore {
@@ -30,7 +51,7 @@ interface MealStore {
 export const useMealStore = create<MealStore>()(
   persist(
     (set, get) => ({
-      meals: [],
+      meals: defaultMeals(),
       plannedMeals: [],
 
       addMeal: (input) => {
@@ -83,6 +104,14 @@ export const useMealStore = create<MealStore>()(
     {
       name: "rm-fitness-meals",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as MealStore;
+        if (!state.meals || state.meals.length === 0) {
+          return { ...state, meals: defaultMeals() };
+        }
+        return state;
+      },
     }
   )
 );

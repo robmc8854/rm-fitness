@@ -87,11 +87,37 @@ export default function WorkoutDetailScreen() {
           </View>
         </Card>
 
-        {exerciseIds.length === 0 && (
+        {workout.plannedExercises.length === 0 && exerciseIds.length === 0 && (
           <Text className="text-textMuted text-center mb-4">
             No exercises added yet. Tap "Add Exercise" to log your first set.
           </Text>
         )}
+
+        {workout.plannedExercises
+          .filter((pe) => !setsByExercise[pe.exerciseId])
+          .map((pe) => {
+            const exercise = getExerciseById(pe.exerciseId);
+            return (
+              <Card key={pe.exerciseId} className="mb-4">
+                <View className="flex-row justify-between items-center">
+                  <View className="flex-1">
+                    <Text className="text-text font-semibold mb-1">{exercise?.name ?? pe.exerciseId}</Text>
+                    <Text className="text-textMuted text-sm">
+                      Target: {pe.targetSets} × {pe.targetReps}
+                    </Text>
+                  </View>
+                  <Pressable
+                    onPress={() => {
+                      setSelectedExerciseId(pe.exerciseId);
+                      setPickerOpen(true);
+                    }}
+                  >
+                    <Text className="text-primary">+ Log set</Text>
+                  </Pressable>
+                </View>
+              </Card>
+            );
+          })}
 
         {exerciseIds.map((exId) => {
           const exercise = getExerciseById(exId);

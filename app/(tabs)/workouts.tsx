@@ -1,21 +1,27 @@
-import { Text, View, Pressable } from "react-native";
+import { useState } from "react";
+import { Text, View, Pressable, Modal } from "react-native";
 import { Link, router } from "expo-router";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Card } from "@/components/Card";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
 import { computePRs } from "@/lib/training";
 import { getExerciseById } from "@/data/exercises";
+import { templatesForSplit, WorkoutTemplate } from "@/data/workoutTemplates";
+import { WorkoutSplit } from "@/types";
+import { colors } from "@/theme/tokens";
 
-const SPLITS = [
+const SPLITS: { key: WorkoutSplit; label: string }[] = [
   { key: "push_pull_legs", label: "Push/Pull/Legs" },
   { key: "upper_lower", label: "Upper/Lower" },
   { key: "full_body", label: "Full Body" },
   { key: "custom", label: "Custom" },
-] as const;
+];
 
 export default function WorkoutsScreen() {
   const workouts = useWorkoutStore((s) => s.workouts);
   const createWorkout = useWorkoutStore((s) => s.createWorkout);
+
+  const [templatePickerSplit, setTemplatePickerSplit] = useState<WorkoutSplit | null>(null);
 
   const activeWorkout = workouts.find((w) => !w.completedAt);
   const completedWorkouts = workouts.filter((w) => w.completedAt);
@@ -24,8 +30,28 @@ export default function WorkoutsScreen() {
     .sort((a, b) => b.bestEstimated1RM - a.bestEstimated1RM)
     .slice(0, 3);
 
-  function startWorkout(split: (typeof SPLITS)[number]["key"], label: string) {
-    const id = createWorkout({ name: label, split });
+  function handleSplitTap(split: WorkoutSplit) {
+    const templates = templatesForSplit(split);
+    if (templates.length === 0) {
+      // Custom has no pre-built template — starts as a blank log.
+      const id = createWorkout({ name: "Custom Workout", split });
+      router.push(`/workouts/${id}`);
+      return;
+    }
+    setTemplatePickerSplit(split);
+  }
+
+  function startFromTemplate(template: WorkoutTemplate) {
+    const id = createWorkout({
+      name: template.name,
+      split: template.split,
+      plannedExercises: template.exercises.map((e) => ({
+        exerciseId: e.exerciseId,
+        targetSets: e.targetSets,
+        targetReps: e.targetReps,
+      })),
+    });
+    setTemplatePickerSplit(null);
     router.push(`/workouts/${id}`);
   }
 
@@ -44,13 +70,13 @@ export default function WorkoutsScreen() {
       ) : (
         <Card className="mb-4">
           <Text className="text-textMuted text-sm mb-1">Start a Workout</Text>
-          <Text className="text-text">No workout in progress — pick a split below to begin.</Text>
+          <Text className="text-text">Pick a split below to see today's plan.</Text>
         </Card>
       )}
 
       <View className="flex-row flex-wrap gap-3 mb-4">
         {SPLITS.map(({ key, label }) => (
-          <Pressable key={key} onPress={() => startWorkout(key, label)} className="flex-1 min-w-[45%]">
+          <Pressable key={key} onPress={() => handleSplitTap(key)} className="flex-1 min-w-[45%]">
             <Card className="items-center py-4">
               <Text className="text-text text-sm text-center font-medium">{label}</Text>
             </Card>
@@ -94,6 +120,40 @@ export default function WorkoutsScreen() {
           </Card>
         </Pressable>
       </Link>
+
+      <Modal
+        visible={templatePickerSplit !== null}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setTemplatePickerSplit(null)}
+      >
+        <View style={{ flex: 1, backgroundColor: colors.background, padding: 16, paddingTop: 24 }}>
+          <Text className="text-text text-xl font-bold mb-4">
+            {SPLITS.find((s) => s.key === templatePickerSplit)?.label} — choose a day
+          </Text>
+
+          {templatePickerSplit &&
+            templatesForSplit(templatePickerSplit).map((template) => (
+              <Pressable key={template.id} onPress={() => startFromTemplate(template)}>
+                <Card className="mb-3">
+                  <Text className="text-text font-semibold mb-2">{template.name}</Text>
+                  {template.exercises.map((ex) => {
+                    const exercise = getExerciseById(ex.exerciseId);
+                    return (
+                      <Text key={ex.exerciseId} className="text-textMuted text-sm py-0.5">
+                        {exercise?.name ?? ex.exerciseId} — {ex.targetSets} × {ex.targetReps}
+                      </Text>
+                    );
+                  })}
+                </Card>
+              </Pressable>
+            ))}
+
+          <Pressable onPress={() => setTemplatePickerSplit(null)} className="mt-2">
+            <Text className="text-textMuted text-center">Cancel</Text>
+          </Pressable>
+        </View>
+      </Modal>
     </ScreenContainer>
   );
 }

@@ -74,8 +74,12 @@ Fully functional and local-first — works offline with no backend required,
 persisted on-device via AsyncStorage (through a Zustand store), ready to be
 layered with Supabase sync later without screen-level changes.
 
-- Start a workout from a split (PPL / Upper-Lower / Full Body / Custom)
-- Add exercises from an 18-exercise seed library (`src/data/exercises.ts`),
+- Real pre-built day templates per split (`src/data/workoutTemplates.ts`):
+  Push/Pull/Legs has 3 days, Upper/Lower has 2, Full Body has 2 variations —
+  each with actual exercises, target sets, and target rep ranges. Custom
+  starts blank, as the spec implies. Picking a split opens a day picker
+  showing the full plan before you commit to it.
+- Add exercises from an 18-move seed library (`src/data/exercises.ts`),
   searchable by name or muscle group
 - Log sets (weight × reps), mark sets complete, remove sets
 - Estimated 1RM per set (Epley formula) and total session volume, live
@@ -88,6 +92,10 @@ layered with Supabase sync later without screen-level changes.
 Also local-first via Zustand + AsyncStorage.
 
 - Daily macro/water logging against default targets, with live progress bars
+- 8 pre-built starter meals (`src/data/mealLibrary.ts`) seeded by default —
+  real macros and ingredient lists, three pre-favourited — so Meal Planner
+  and the Nutrition quick-log aren't empty on first launch. Users can still
+  create their own from scratch alongside them.
 - Saved meals with full macros + optional ingredient list (for shopping list
   generation), favouriting, and one-tap quick-log
 - Simple meal planner: assign saved meals to today (extendable to full week)
