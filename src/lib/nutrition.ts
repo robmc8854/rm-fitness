@@ -6,6 +6,8 @@ export interface MacroTotals {
   carbsG: number;
   fatG: number;
   fibreG: number;
+  sugarG: number;
+  saltG: number;
   waterMl: number;
 }
 
@@ -15,6 +17,8 @@ export const EMPTY_TOTALS: MacroTotals = {
   carbsG: 0,
   fatG: 0,
   fibreG: 0,
+  sugarG: 0,
+  saltG: 0,
   waterMl: 0,
 };
 
@@ -26,6 +30,8 @@ export function sumMeals(meals: Meal[]): MacroTotals {
       carbsG: acc.carbsG + m.carbsG,
       fatG: acc.fatG + m.fatG,
       fibreG: acc.fibreG,
+      sugarG: acc.sugarG + m.sugarG,
+      saltG: acc.saltG + m.saltG,
       waterMl: acc.waterMl,
     }),
     { ...EMPTY_TOTALS }
@@ -47,6 +53,8 @@ export interface DailyTargets {
   carbsG: number;
   fatG: number;
   fibreG: number;
+  sugarG: number;
+  saltG: number;
   waterMl: number;
 }
 
@@ -59,5 +67,7 @@ export const DEFAULT_TARGETS: DailyTargets = {
   carbsG: 250,
   fatG: 70,
   fibreG: 30,
+  sugarG: 50,
+  saltG: 6,
   waterMl: 3000,
 };

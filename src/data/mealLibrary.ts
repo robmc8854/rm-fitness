@@ -8,7 +8,10 @@ export interface LibraryMeal {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  sugarG: number;
+  saltG: number;
   ingredients: MealIngredient[];
+  recipeInstructions: string | null;
 }
 
 // A real starter meal library — enough variety across breakfast/lunch/
@@ -21,7 +24,7 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
     id: "lib-protein-oats",
     name: "Protein Oats",
     category: "breakfast",
-    calories: 480, proteinG: 38, carbsG: 55, fatG: 12,
+    calories: 480, proteinG: 38, carbsG: 55, fatG: 12, sugarG: 15, saltG: 0.6,
     ingredients: [
       { name: "Rolled oats", quantity: "80g", category: "Pantry" },
       { name: "Whey protein", quantity: "1 scoop", category: "Pantry" },
@@ -29,36 +32,39 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Peanut butter", quantity: "1 tbsp", category: "Pantry" },
       { name: "Milk", quantity: "250ml", category: "Dairy" },
     ],
+    recipeInstructions: "Combine oats and milk in a pan, simmer 5 minutes stirring occasionally. Remove from heat, stir in protein powder until smooth. Top with sliced banana and a drizzle of peanut butter.",
   },
   {
     id: "lib-steak-eggs",
     name: "Steak & Eggs",
     category: "breakfast",
-    calories: 540, proteinG: 48, carbsG: 6, fatG: 34,
+    calories: 540, proteinG: 48, carbsG: 6, fatG: 34, sugarG: 2, saltG: 0.7,
     ingredients: [
       { name: "Sirloin steak", quantity: "200g", category: "Protein" },
       { name: "Large eggs", quantity: "3", category: "Dairy" },
       { name: "Spinach", quantity: "50g", category: "Produce" },
       { name: "Butter", quantity: "1 tsp", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-greek-yogurt-bowl",
     name: "Greek Yogurt Bowl",
     category: "breakfast",
-    calories: 380, proteinG: 32, carbsG: 42, fatG: 9,
+    calories: 380, proteinG: 32, carbsG: 42, fatG: 9, sugarG: 12, saltG: 0.5,
     ingredients: [
       { name: "Greek yogurt", quantity: "250g", category: "Dairy" },
       { name: "Mixed berries", quantity: "100g", category: "Produce" },
       { name: "Granola", quantity: "40g", category: "Pantry" },
       { name: "Honey", quantity: "1 tsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-veggie-omelette",
     name: "Veggie Omelette",
     category: "breakfast",
-    calories: 410, proteinG: 30, carbsG: 10, fatG: 27,
+    calories: 410, proteinG: 30, carbsG: 10, fatG: 27, sugarG: 3, saltG: 0.5,
     ingredients: [
       { name: "Large eggs", quantity: "4", category: "Dairy" },
       { name: "Bell pepper", quantity: "0.5", category: "Produce" },
@@ -66,12 +72,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Cheddar cheese", quantity: "30g", category: "Dairy" },
       { name: "Olive oil", quantity: "1 tsp", category: "Pantry" },
     ],
+    recipeInstructions: "Whisk eggs with a pinch of salt. Sauté diced pepper and mushrooms in oil for 3 minutes. Pour in eggs, cook until nearly set, sprinkle cheese over half, fold, and cook 1 more minute.",
   },
   {
     id: "lib-protein-pancakes",
     name: "Protein Pancakes",
     category: "breakfast",
-    calories: 460, proteinG: 36, carbsG: 48, fatG: 12,
+    calories: 460, proteinG: 36, carbsG: 48, fatG: 12, sugarG: 13, saltG: 0.6,
     ingredients: [
       { name: "Oat flour", quantity: "60g", category: "Pantry" },
       { name: "Whey protein", quantity: "1 scoop", category: "Pantry" },
@@ -79,36 +86,39 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Maple syrup", quantity: "1 tbsp", category: "Pantry" },
       { name: "Blueberries", quantity: "60g", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-smoked-salmon-bagel",
     name: "Smoked Salmon Bagel",
     category: "breakfast",
-    calories: 490, proteinG: 30, carbsG: 52, fatG: 17,
+    calories: 490, proteinG: 30, carbsG: 52, fatG: 17, sugarG: 15, saltG: 0.6,
     ingredients: [
       { name: "Wholemeal bagel", quantity: "1", category: "Pantry" },
       { name: "Smoked salmon", quantity: "80g", category: "Protein" },
       { name: "Cream cheese", quantity: "30g", category: "Dairy" },
       { name: "Red onion", quantity: "small handful", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-cottage-cheese-toast",
     name: "Cottage Cheese Toast",
     category: "breakfast",
-    calories: 350, proteinG: 28, carbsG: 34, fatG: 10,
+    calories: 350, proteinG: 28, carbsG: 34, fatG: 10, sugarG: 10, saltG: 0.5,
     ingredients: [
       { name: "Sourdough bread", quantity: "2 slices", category: "Pantry" },
       { name: "Cottage cheese", quantity: "150g", category: "Dairy" },
       { name: "Cherry tomatoes", quantity: "80g", category: "Produce" },
       { name: "Black pepper", quantity: "to taste", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-breakfast-burrito",
     name: "Breakfast Burrito",
     category: "breakfast",
-    calories: 560, proteinG: 34, carbsG: 46, fatG: 26,
+    calories: 560, proteinG: 34, carbsG: 46, fatG: 26, sugarG: 13, saltG: 0.7,
     ingredients: [
       { name: "Large eggs", quantity: "3", category: "Dairy" },
       { name: "Tortilla wrap", quantity: "1 large", category: "Pantry" },
@@ -116,12 +126,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Cheddar cheese", quantity: "30g", category: "Dairy" },
       { name: "Salsa", quantity: "2 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-overnight-oats-pb",
     name: "Overnight Oats with PB",
     category: "breakfast",
-    calories: 420, proteinG: 22, carbsG: 52, fatG: 15,
+    calories: 420, proteinG: 22, carbsG: 52, fatG: 15, sugarG: 15, saltG: 0.5,
     ingredients: [
       { name: "Rolled oats", quantity: "70g", category: "Pantry" },
       { name: "Greek yogurt", quantity: "100g", category: "Dairy" },
@@ -129,12 +140,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Chia seeds", quantity: "1 tbsp", category: "Pantry" },
       { name: "Milk", quantity: "150ml", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-breakfast-hash",
     name: "Turkey Breakfast Hash",
     category: "breakfast",
-    calories: 470, proteinG: 36, carbsG: 38, fatG: 18,
+    calories: 470, proteinG: 36, carbsG: 38, fatG: 18, sugarG: 11, saltG: 0.6,
     ingredients: [
       { name: "Turkey mince", quantity: "150g", category: "Protein" },
       { name: "Potatoes", quantity: "200g", category: "Produce" },
@@ -142,6 +154,7 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Onion", quantity: "0.5", category: "Produce" },
       { name: "Large eggs", quantity: "1", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
 
   // ---------- LUNCH ----------
@@ -149,19 +162,20 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
     id: "lib-chicken-rice-bowl",
     name: "Chicken & Rice Bowl",
     category: "lunch",
-    calories: 620, proteinG: 52, carbsG: 68, fatG: 14,
+    calories: 620, proteinG: 52, carbsG: 68, fatG: 14, sugarG: 19, saltG: 0.8,
     ingredients: [
       { name: "Chicken breast", quantity: "200g", category: "Protein" },
       { name: "Basmati rice", quantity: "150g cooked", category: "Pantry" },
       { name: "Broccoli", quantity: "100g", category: "Produce" },
       { name: "Soy sauce", quantity: "1 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: "Season chicken breast and pan-fry or grill for 6-7 minutes per side until cooked through. Rest 5 minutes, then slice. Serve over cooked rice with steamed broccoli, drizzled with soy sauce.",
   },
   {
     id: "lib-turkey-wrap",
     name: "Turkey & Avocado Wrap",
     category: "lunch",
-    calories: 460, proteinG: 34, carbsG: 38, fatG: 18,
+    calories: 460, proteinG: 34, carbsG: 38, fatG: 18, sugarG: 11, saltG: 0.6,
     ingredients: [
       { name: "Turkey breast slices", quantity: "150g", category: "Protein" },
       { name: "Wholemeal wrap", quantity: "1", category: "Pantry" },
@@ -169,12 +183,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Lettuce", quantity: "handful", category: "Produce" },
       { name: "Tomato", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-tuna-salad",
     name: "Tuna Niçoise Salad",
     category: "lunch",
-    calories: 430, proteinG: 38, carbsG: 24, fatG: 20,
+    calories: 430, proteinG: 38, carbsG: 24, fatG: 20, sugarG: 7, saltG: 0.6,
     ingredients: [
       { name: "Tuna steak or tinned tuna", quantity: "150g", category: "Protein" },
       { name: "New potatoes", quantity: "120g", category: "Produce" },
@@ -182,12 +197,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Large eggs", quantity: "1", category: "Dairy" },
       { name: "Olives", quantity: "30g", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-chicken-caesar",
     name: "Chicken Caesar Salad",
     category: "lunch",
-    calories: 500, proteinG: 44, carbsG: 18, fatG: 28,
+    calories: 500, proteinG: 44, carbsG: 18, fatG: 28, sugarG: 5, saltG: 0.7,
     ingredients: [
       { name: "Chicken breast", quantity: "180g", category: "Protein" },
       { name: "Romaine lettuce", quantity: "1 head", category: "Produce" },
@@ -195,12 +211,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Caesar dressing", quantity: "2 tbsp", category: "Pantry" },
       { name: "Croutons", quantity: "20g", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-falafel-bowl",
     name: "Falafel & Hummus Bowl",
     category: "lunch",
-    calories: 550, proteinG: 20, carbsG: 62, fatG: 24,
+    calories: 550, proteinG: 20, carbsG: 62, fatG: 24, sugarG: 17, saltG: 0.7,
     ingredients: [
       { name: "Falafel", quantity: "6 pieces", category: "Frozen" },
       { name: "Hummus", quantity: "60g", category: "Pantry" },
@@ -208,12 +225,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Cucumber", quantity: "0.5", category: "Produce" },
       { name: "Cherry tomatoes", quantity: "80g", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-beef-burrito-bowl",
     name: "Beef Burrito Bowl",
     category: "lunch",
-    calories: 640, proteinG: 42, carbsG: 60, fatG: 24,
+    calories: 640, proteinG: 42, carbsG: 60, fatG: 24, sugarG: 17, saltG: 0.8,
     ingredients: [
       { name: "Lean beef mince", quantity: "180g", category: "Protein" },
       { name: "Basmati rice", quantity: "150g cooked", category: "Pantry" },
@@ -221,12 +239,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Sweetcorn", quantity: "60g", category: "Produce" },
       { name: "Cheddar cheese", quantity: "30g", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-prawn-noodle-salad",
     name: "Prawn Noodle Salad",
     category: "lunch",
-    calories: 470, proteinG: 34, carbsG: 52, fatG: 12,
+    calories: 470, proteinG: 34, carbsG: 52, fatG: 12, sugarG: 15, saltG: 0.6,
     ingredients: [
       { name: "King prawns", quantity: "180g", category: "Protein" },
       { name: "Rice noodles", quantity: "100g", category: "Pantry" },
@@ -234,12 +253,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Beansprouts", quantity: "60g", category: "Produce" },
       { name: "Lime", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-chicken-pesto-pasta",
     name: "Chicken Pesto Pasta",
     category: "lunch",
-    calories: 610, proteinG: 44, carbsG: 58, fatG: 22,
+    calories: 610, proteinG: 44, carbsG: 58, fatG: 22, sugarG: 16, saltG: 0.8,
     ingredients: [
       { name: "Chicken breast", quantity: "180g", category: "Protein" },
       { name: "Penne pasta", quantity: "100g dry", category: "Pantry" },
@@ -247,12 +267,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Cherry tomatoes", quantity: "80g", category: "Produce" },
       { name: "Parmesan cheese", quantity: "15g", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-lentil-soup",
     name: "Lentil & Vegetable Soup",
     category: "lunch",
-    calories: 380, proteinG: 22, carbsG: 55, fatG: 8,
+    calories: 380, proteinG: 22, carbsG: 55, fatG: 8, sugarG: 15, saltG: 0.5,
     ingredients: [
       { name: "Red lentils", quantity: "100g dry", category: "Pantry" },
       { name: "Carrot", quantity: "2", category: "Produce" },
@@ -260,18 +281,20 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Vegetable stock", quantity: "500ml", category: "Pantry" },
       { name: "Crusty bread", quantity: "1 slice", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-egg-salad-sandwich",
     name: "Egg Salad Sandwich",
     category: "lunch",
-    calories: 420, proteinG: 26, carbsG: 38, fatG: 18,
+    calories: 420, proteinG: 26, carbsG: 38, fatG: 18, sugarG: 11, saltG: 0.5,
     ingredients: [
       { name: "Large eggs", quantity: "3", category: "Dairy" },
       { name: "Wholemeal bread", quantity: "2 slices", category: "Pantry" },
       { name: "Mayonnaise", quantity: "1 tbsp", category: "Pantry" },
       { name: "Lettuce", quantity: "handful", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
 
   // ---------- DINNER ----------
@@ -279,19 +302,20 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
     id: "lib-salmon-sweet-potato",
     name: "Salmon & Sweet Potato",
     category: "dinner",
-    calories: 590, proteinG: 42, carbsG: 48, fatG: 22,
+    calories: 590, proteinG: 42, carbsG: 48, fatG: 22, sugarG: 13, saltG: 0.8,
     ingredients: [
       { name: "Salmon fillet", quantity: "180g", category: "Protein" },
       { name: "Sweet potato", quantity: "250g", category: "Produce" },
       { name: "Asparagus", quantity: "100g", category: "Produce" },
       { name: "Olive oil", quantity: "1 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: "Preheat oven to 200°C. Cube sweet potato, toss in half the oil, roast 25 minutes. Add salmon and asparagus to the tray for the final 12-15 minutes, drizzled with remaining oil, until salmon flakes easily.",
   },
   {
     id: "lib-beef-stirfry",
     name: "Beef Stir Fry",
     category: "dinner",
-    calories: 610, proteinG: 45, carbsG: 58, fatG: 20,
+    calories: 610, proteinG: 45, carbsG: 58, fatG: 20, sugarG: 16, saltG: 0.8,
     ingredients: [
       { name: "Lean beef strips", quantity: "200g", category: "Protein" },
       { name: "Egg noodles", quantity: "150g cooked", category: "Pantry" },
@@ -299,12 +323,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Soy sauce", quantity: "2 tbsp", category: "Pantry" },
       { name: "Sesame oil", quantity: "1 tsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-chicken-curry",
     name: "Chicken Curry & Rice",
     category: "dinner",
-    calories: 650, proteinG: 48, carbsG: 62, fatG: 22,
+    calories: 650, proteinG: 48, carbsG: 62, fatG: 22, sugarG: 17, saltG: 0.8,
     ingredients: [
       { name: "Chicken thigh", quantity: "220g", category: "Protein" },
       { name: "Basmati rice", quantity: "150g cooked", category: "Pantry" },
@@ -312,12 +337,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Curry paste", quantity: "2 tbsp", category: "Pantry" },
       { name: "Onion", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-baked-cod-veg",
     name: "Baked Cod & Vegetables",
     category: "dinner",
-    calories: 460, proteinG: 40, carbsG: 32, fatG: 16,
+    calories: 460, proteinG: 40, carbsG: 32, fatG: 16, sugarG: 9, saltG: 0.6,
     ingredients: [
       { name: "Cod fillet", quantity: "200g", category: "Protein" },
       { name: "New potatoes", quantity: "200g", category: "Produce" },
@@ -325,12 +351,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Cherry tomatoes", quantity: "100g", category: "Produce" },
       { name: "Olive oil", quantity: "1 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-turkey-chilli",
     name: "Turkey Chilli",
     category: "dinner",
-    calories: 560, proteinG: 46, carbsG: 46, fatG: 18,
+    calories: 560, proteinG: 46, carbsG: 46, fatG: 18, sugarG: 13, saltG: 0.7,
     ingredients: [
       { name: "Turkey mince", quantity: "200g", category: "Protein" },
       { name: "Kidney beans", quantity: "150g", category: "Pantry" },
@@ -338,24 +365,26 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Basmati rice", quantity: "120g cooked", category: "Pantry" },
       { name: "Onion", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: "Brown turkey mince with diced onion in a large pan, 5-6 minutes. Add chopped tomatoes and kidney beans, season with chilli powder, cumin, and paprika. Simmer 20 minutes. Serve over rice.",
   },
   {
     id: "lib-steak-veg",
     name: "Sirloin Steak & Greens",
     category: "dinner",
-    calories: 620, proteinG: 52, carbsG: 20, fatG: 36,
+    calories: 620, proteinG: 52, carbsG: 20, fatG: 36, sugarG: 6, saltG: 0.8,
     ingredients: [
       { name: "Sirloin steak", quantity: "220g", category: "Protein" },
       { name: "Tenderstem broccoli", quantity: "150g", category: "Produce" },
       { name: "Mushrooms", quantity: "100g", category: "Produce" },
       { name: "Butter", quantity: "1 tbsp", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-veggie-stirfry-tofu",
     name: "Tofu Vegetable Stir Fry",
     category: "dinner",
-    calories: 480, proteinG: 28, carbsG: 50, fatG: 18,
+    calories: 480, proteinG: 28, carbsG: 50, fatG: 18, sugarG: 14, saltG: 0.6,
     ingredients: [
       { name: "Firm tofu", quantity: "200g", category: "Protein" },
       { name: "Jasmine rice", quantity: "150g cooked", category: "Pantry" },
@@ -363,24 +392,26 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Soy sauce", quantity: "2 tbsp", category: "Pantry" },
       { name: "Peanut sauce", quantity: "1 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-lamb-chops-mash",
     name: "Lamb Chops & Mash",
     category: "dinner",
-    calories: 680, proteinG: 48, carbsG: 42, fatG: 34,
+    calories: 680, proteinG: 48, carbsG: 42, fatG: 34, sugarG: 12, saltG: 0.9,
     ingredients: [
       { name: "Lamb chops", quantity: "250g", category: "Protein" },
       { name: "Potatoes", quantity: "250g", category: "Produce" },
       { name: "Butter", quantity: "1 tbsp", category: "Dairy" },
       { name: "Green beans", quantity: "100g", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-shrimp-fried-rice",
     name: "Prawn Fried Rice",
     category: "dinner",
-    calories: 540, proteinG: 34, carbsG: 60, fatG: 16,
+    calories: 540, proteinG: 34, carbsG: 60, fatG: 16, sugarG: 17, saltG: 0.7,
     ingredients: [
       { name: "King prawns", quantity: "180g", category: "Protein" },
       { name: "Basmati rice", quantity: "150g cooked", category: "Pantry" },
@@ -388,12 +419,13 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Frozen peas", quantity: "80g", category: "Frozen" },
       { name: "Spring onion", quantity: "2", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-margherita-chicken",
     name: "Chicken Margherita & Veg",
     category: "dinner",
-    calories: 570, proteinG: 50, carbsG: 28, fatG: 26,
+    calories: 570, proteinG: 50, carbsG: 28, fatG: 26, sugarG: 8, saltG: 0.7,
     ingredients: [
       { name: "Chicken breast", quantity: "200g", category: "Protein" },
       { name: "Mozzarella", quantity: "60g", category: "Dairy" },
@@ -401,6 +433,7 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
       { name: "Basil", quantity: "handful", category: "Produce" },
       { name: "New potatoes", quantity: "150g", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
 
   // ---------- SNACK ----------
@@ -408,83 +441,91 @@ export const MEAL_LIBRARY: LibraryMeal[] = [
     id: "lib-protein-shake-almonds",
     name: "Protein Shake + Almonds",
     category: "snack",
-    calories: 320, proteinG: 30, carbsG: 14, fatG: 16,
+    calories: 320, proteinG: 30, carbsG: 14, fatG: 16, sugarG: 4, saltG: 0.4,
     ingredients: [
       { name: "Whey protein", quantity: "1 scoop", category: "Pantry" },
       { name: "Almonds", quantity: "20g", category: "Pantry" },
       { name: "Milk", quantity: "200ml", category: "Dairy" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-apple-peanut-butter",
     name: "Apple & Peanut Butter",
     category: "snack",
-    calories: 250, proteinG: 7, carbsG: 30, fatG: 12,
+    calories: 250, proteinG: 7, carbsG: 30, fatG: 12, sugarG: 8, saltG: 0.3,
     ingredients: [
       { name: "Apple", quantity: "1", category: "Produce" },
       { name: "Peanut butter", quantity: "1.5 tbsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-cottage-cheese-pineapple",
     name: "Cottage Cheese & Pineapple",
     category: "snack",
-    calories: 220, proteinG: 24, carbsG: 20, fatG: 4,
+    calories: 220, proteinG: 24, carbsG: 20, fatG: 4, sugarG: 6, saltG: 0.3,
     ingredients: [
       { name: "Cottage cheese", quantity: "200g", category: "Dairy" },
       { name: "Pineapple chunks", quantity: "100g", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-rice-cakes-turkey",
     name: "Rice Cakes & Turkey Slices",
     category: "snack",
-    calories: 210, proteinG: 20, carbsG: 24, fatG: 4,
+    calories: 210, proteinG: 20, carbsG: 24, fatG: 4, sugarG: 7, saltG: 0.3,
     ingredients: [
       { name: "Rice cakes", quantity: "3", category: "Pantry" },
       { name: "Turkey breast slices", quantity: "80g", category: "Protein" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-boiled-eggs-snack",
     name: "Boiled Eggs & Carrot Sticks",
     category: "snack",
-    calories: 230, proteinG: 18, carbsG: 10, fatG: 14,
+    calories: 230, proteinG: 18, carbsG: 10, fatG: 14, sugarG: 3, saltG: 0.3,
     ingredients: [
       { name: "Large eggs", quantity: "3", category: "Dairy" },
       { name: "Carrot", quantity: "2", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-protein-bar-banana",
     name: "Protein Bar & Banana",
     category: "snack",
-    calories: 340, proteinG: 22, carbsG: 42, fatG: 10,
+    calories: 340, proteinG: 22, carbsG: 42, fatG: 10, sugarG: 12, saltG: 0.4,
     ingredients: [
       { name: "Protein bar", quantity: "1", category: "Pantry" },
       { name: "Banana", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-hummus-veg-sticks",
     name: "Hummus & Vegetable Sticks",
     category: "snack",
-    calories: 200, proteinG: 8, carbsG: 20, fatG: 10,
+    calories: 200, proteinG: 8, carbsG: 20, fatG: 10, sugarG: 6, saltG: 0.3,
     ingredients: [
       { name: "Hummus", quantity: "60g", category: "Pantry" },
       { name: "Cucumber", quantity: "0.5", category: "Produce" },
       { name: "Bell pepper", quantity: "0.5", category: "Produce" },
       { name: "Carrot", quantity: "1", category: "Produce" },
     ],
+    recipeInstructions: null,
   },
   {
     id: "lib-greek-yogurt-honey",
     name: "Greek Yogurt & Honey",
     category: "snack",
-    calories: 180, proteinG: 18, carbsG: 18, fatG: 4,
+    calories: 180, proteinG: 18, carbsG: 18, fatG: 4, sugarG: 5, saltG: 0.2,
     ingredients: [
       { name: "Greek yogurt", quantity: "170g", category: "Dairy" },
       { name: "Honey", quantity: "1 tsp", category: "Pantry" },
     ],
+    recipeInstructions: null,
   },
 ];

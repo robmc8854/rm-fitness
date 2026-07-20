@@ -25,8 +25,11 @@ function defaultMeals(): Meal[] {
     proteinG: m.proteinG,
     carbsG: m.carbsG,
     fatG: m.fatG,
+    sugarG: m.sugarG,
+    saltG: m.saltG,
     isFavourite: DEFAULT_FAVOURITE_IDS.has(m.id),
     ingredients: m.ingredients,
+    recipeInstructions: m.recipeInstructions,
   }));
 }
 
@@ -41,7 +44,10 @@ interface MealStore {
     proteinG: number;
     carbsG: number;
     fatG: number;
+    sugarG?: number;
+    saltG?: number;
     ingredients?: MealIngredient[];
+    recipeInstructions?: string | null;
   }) => string;
   deleteMeal: (mealId: string) => void;
   toggleFavourite: (mealId: string) => void;
@@ -49,6 +55,7 @@ interface MealStore {
   planMeal: (date: string, mealId: string) => void;
   removePlannedMeal: (plannedMealId: string) => void;
   plannedMealsForRange: (startDate: string, endDate: string) => PlannedMeal[];
+  copyDayMeals: (fromDate: string, toDate: string) => void;
 }
 
 export const useMealStore = create<MealStore>()(
@@ -68,8 +75,11 @@ export const useMealStore = create<MealStore>()(
           proteinG: input.proteinG,
           carbsG: input.carbsG,
           fatG: input.fatG,
+          sugarG: input.sugarG ?? 0,
+          saltG: input.saltG ?? 0,
           isFavourite: false,
           ingredients: input.ingredients ?? [],
+          recipeInstructions: input.recipeInstructions ?? null,
         };
         set((state) => ({ meals: [meal, ...state.meals] }));
         return id;
@@ -104,11 +114,21 @@ export const useMealStore = create<MealStore>()(
       plannedMealsForRange: (startDate, endDate) => {
         return get().plannedMeals.filter((p) => p.date >= startDate && p.date <= endDate);
       },
+
+      copyDayMeals: (fromDate, toDate) => {
+        const sourceMeals = get().plannedMeals.filter((p) => p.date === fromDate);
+        const copies: PlannedMeal[] = sourceMeals.map((p) => ({
+          id: generateId(),
+          date: toDate,
+          mealId: p.mealId,
+        }));
+        set((state) => ({ plannedMeals: [...state.plannedMeals, ...copies] }));
+      },
     }),
     {
       name: "rm-fitness-meals",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 3,
+      version: 4,
       migrate: (persistedState) => {
         const state = persistedState as MealStore;
         const existingMeals = state.meals ?? [];
@@ -117,17 +137,22 @@ export const useMealStore = create<MealStore>()(
           return { ...state, meals: defaultMeals() };
         }
 
-        // Backfill category on meals saved before it existed (matching
-        // against the library by id where possible), and merge in any
-        // library meals this install doesn't have yet (new content added
-        // since they first launched) without touching their own custom meals.
+        // Backfill category/sugar/salt/recipe on meals saved before those
+        // fields existed (matching against the library by id where
+        // possible), and merge in any library meals this install doesn't
+        // have yet, without touching the person's own custom meals.
         const libraryById = new Map(MEAL_LIBRARY.map((m) => [m.id, m]));
         const existingIds = new Set(existingMeals.map((m) => m.id));
 
         const patched = existingMeals.map((m) => {
-          if (m.category) return m;
           const libMatch = libraryById.get(m.id);
-          return { ...m, category: libMatch?.category ?? ("lunch" as const) };
+          return {
+            ...m,
+            category: m.category ?? libMatch?.category ?? ("lunch" as const),
+            sugarG: m.sugarG ?? libMatch?.sugarG ?? 0,
+            saltG: m.saltG ?? libMatch?.saltG ?? 0,
+            recipeInstructions: m.recipeInstructions ?? libMatch?.recipeInstructions ?? null,
+          };
         });
 
         const newLibraryMeals = defaultMeals().filter((m) => !existingIds.has(m.id));

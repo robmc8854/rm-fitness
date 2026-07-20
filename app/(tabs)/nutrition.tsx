@@ -43,6 +43,8 @@ export default function NutritionScreen() {
       proteinG: meal.proteinG,
       carbsG: meal.carbsG,
       fatG: meal.fatG,
+      sugarG: meal.sugarG,
+      saltG: meal.saltG,
     });
   }
 
@@ -60,6 +62,8 @@ export default function NutritionScreen() {
         <MacroRow label="Protein" value={log.proteinG} target={DEFAULT_TARGETS.proteinG} unit="g" />
         <MacroRow label="Carbs" value={log.carbsG} target={DEFAULT_TARGETS.carbsG} unit="g" />
         <MacroRow label="Fat" value={log.fatG} target={DEFAULT_TARGETS.fatG} unit="g" />
+        <MacroRow label="Sugar" value={log.sugarG} target={DEFAULT_TARGETS.sugarG} unit="g" />
+        <MacroRow label="Salt" value={log.saltG} target={DEFAULT_TARGETS.saltG} unit="g" />
         <MacroRow label="Water" value={log.waterMl} target={DEFAULT_TARGETS.waterMl} unit="ml" />
       </Card>
 

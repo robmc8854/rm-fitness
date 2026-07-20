@@ -21,22 +21,52 @@ const MEAL_CATEGORIES: { key: MealCategory; label: string }[] = [
 
 type FilterKey = MealCategory | "all";
 
+function next7Days(): { key: string; label: string; weekday: string }[] {
+  const days = [];
+  const cursor = new Date();
+  for (let i = 0; i < 7; i++) {
+    const key = cursor.toISOString().slice(0, 10);
+    const weekday = cursor.toLocaleDateString(undefined, { weekday: "short" });
+    const label = cursor.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    days.push({ key, label, weekday });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
+function prevDateKey(dateKey: string): string {
+  const d = new Date(dateKey);
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
 export default function MealsScreen() {
   const meals = useMealStore((s) => s.meals);
   const addMeal = useMealStore((s) => s.addMeal);
   const deleteMeal = useMealStore((s) => s.deleteMeal);
   const toggleFavourite = useMealStore((s) => s.toggleFavourite);
   const planMeal = useMealStore((s) => s.planMeal);
+  const removePlannedMeal = useMealStore((s) => s.removePlannedMeal);
+  const copyDayMeals = useMealStore((s) => s.copyDayMeals);
   const plannedMeals = useMealStore((s) => s.plannedMeals);
+
+  const today = todayKey();
+  const weekDays = useMemo(() => next7Days(), []);
+  const [selectedDate, setSelectedDate] = useState(today);
 
   const [filter, setFilter] = useState<FilterKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
+  const [expandedRecipeId, setExpandedRecipeId] = useState<string | null>(null);
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState<MealCategory>("lunch");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
+  const [sugar, setSugar] = useState("");
+  const [salt, setSalt] = useState("");
+  const [recipe, setRecipe] = useState("");
   const [ingredients, setIngredients] = useState<MealIngredient[]>([]);
   const [ingName, setIngName] = useState("");
   const [ingQty, setIngQty] = useState("");
@@ -56,6 +86,9 @@ export default function MealsScreen() {
     setProtein("");
     setCarbs("");
     setFat("");
+    setSugar("");
+    setSalt("");
+    setRecipe("");
     setIngredients([]);
   }
 
@@ -68,14 +101,17 @@ export default function MealsScreen() {
       proteinG: parseInt(protein, 10) || 0,
       carbsG: parseInt(carbs, 10) || 0,
       fatG: parseInt(fat, 10) || 0,
+      sugarG: parseInt(sugar, 10) || 0,
+      saltG: parseFloat(salt) || 0,
       ingredients,
+      recipeInstructions: recipe.trim() || null,
     });
     resetForm();
     setCreateOpen(false);
   }
 
-  const today = todayKey();
-  const plannedToday = plannedMeals.filter((p) => p.date === today);
+  const plannedForSelectedDate = plannedMeals.filter((p) => p.date === selectedDate);
+  const canCopyFromYesterday = plannedMeals.some((p) => p.date === prevDateKey(selectedDate));
 
   const filteredMeals = useMemo(
     () => (filter === "all" ? meals : meals.filter((m) => m.category === filter)),
@@ -95,19 +131,47 @@ export default function MealsScreen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: "Meal Planner" }} />
       <ScreenContainer>
-        <Card className="mb-4 mt-2">
-          <Text className="text-textMuted text-sm mb-2">Planned for Today</Text>
-          {plannedToday.length === 0 ? (
+        <Text className="text-textMuted text-sm mt-2 mb-2">This Week</Text>
+        <View className="flex-row gap-2 mb-4">
+          {weekDays.map((d) => (
+            <Pressable key={d.key} onPress={() => setSelectedDate(d.key)} className="flex-1">
+              <View
+                className="items-center py-2 rounded-md border"
+                style={{
+                  borderColor: selectedDate === d.key ? colors.primary : colors.border,
+                  backgroundColor: selectedDate === d.key ? colors.primaryMuted : "transparent",
+                }}
+              >
+                <Text className="text-textMuted text-xs">{d.weekday}</Text>
+                <Text className="text-text text-xs font-semibold">{d.label.split(" ")[0]}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+
+        <Card className="mb-4">
+          <Text className="text-textMuted text-sm mb-2">
+            Planned for {selectedDate === today ? "Today" : weekDays.find((d) => d.key === selectedDate)?.label}
+          </Text>
+          {plannedForSelectedDate.length === 0 ? (
             <Text className="text-text">Nothing planned yet — add a saved meal below.</Text>
           ) : (
-            plannedToday.map((p) => {
+            plannedForSelectedDate.map((p) => {
               const meal = meals.find((m) => m.id === p.mealId);
               return (
-                <Text key={p.id} className="text-text py-1">
-                  {meal?.name ?? "Unknown meal"}
-                </Text>
+                <View key={p.id} className="flex-row justify-between items-center py-1">
+                  <Text className="text-text">{meal?.name ?? "Unknown meal"}</Text>
+                  <Pressable onPress={() => removePlannedMeal(p.id)}>
+                    <Text style={{ color: colors.danger }}>Remove</Text>
+                  </Pressable>
+                </View>
               );
             })
+          )}
+          {canCopyFromYesterday && (
+            <Pressable onPress={() => copyDayMeals(prevDateKey(selectedDate), selectedDate)} className="mt-2">
+              <Text className="text-primary text-sm">Copy previous day's meals →</Text>
+            </Pressable>
           )}
         </Card>
 
@@ -164,16 +228,28 @@ export default function MealsScreen() {
                     </Pressable>
                   </View>
                   <Text className="text-textMuted text-xs mb-2">
-                    {m.calories} kcal · P{m.proteinG}g · C{m.carbsG}g · F{m.fatG}g
+                    {m.calories} kcal · P{m.proteinG}g · C{m.carbsG}g · F{m.fatG}g · Sugar {m.sugarG}g · Salt {m.saltG}g
                   </Text>
                   {m.ingredients.length > 0 && (
                     <Text className="text-textMuted text-xs mb-2">
                       {m.ingredients.map((i) => i.name).join(", ")}
                     </Text>
                   )}
+                  {m.recipeInstructions && (
+                    <Pressable onPress={() => setExpandedRecipeId(expandedRecipeId === m.id ? null : m.id)}>
+                      <Text className="text-primary text-xs mb-2">
+                        {expandedRecipeId === m.id ? "Hide recipe ▲" : "View recipe ▼"}
+                      </Text>
+                    </Pressable>
+                  )}
+                  {expandedRecipeId === m.id && m.recipeInstructions && (
+                    <Text className="text-textMuted text-xs mb-2">{m.recipeInstructions}</Text>
+                  )}
                   <View className="flex-row gap-3">
-                    <Pressable onPress={() => planMeal(today, m.id)}>
-                      <Text className="text-primary text-sm">Plan for today</Text>
+                    <Pressable onPress={() => planMeal(selectedDate, m.id)}>
+                      <Text className="text-primary text-sm">
+                        Plan for {selectedDate === today ? "today" : "this day"}
+                      </Text>
                     </Pressable>
                     <Pressable onPress={() => deleteMeal(m.id)}>
                       <Text style={{ color: colors.danger, fontSize: 14 }}>Delete</Text>
@@ -226,6 +302,24 @@ export default function MealsScreen() {
                 <TextField label="Fat (g)" value={fat} onChangeText={setFat} keyboardType="numeric" />
               </View>
             </View>
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <TextField label="Sugar (g)" value={sugar} onChangeText={setSugar} keyboardType="numeric" />
+              </View>
+              <View className="flex-1">
+                <TextField label="Salt (g)" value={salt} onChangeText={setSalt} keyboardType="numeric" />
+              </View>
+            </View>
+
+            <TextField
+              label="Recipe instructions (optional)"
+              value={recipe}
+              onChangeText={setRecipe}
+              placeholder="How to make it..."
+              multiline
+              numberOfLines={4}
+              style={{ minHeight: 90, textAlignVertical: "top" }}
+            />
 
             <Text className="text-textMuted text-sm mt-2 mb-2">Ingredients (for shopping list)</Text>
             {ingredients.map((ing, idx) => (

@@ -24,6 +24,8 @@ export const useNutritionLogStore = create<NutritionLogStore>()(
             carbsG: current.carbsG + (delta.carbsG ?? 0),
             fatG: current.fatG + (delta.fatG ?? 0),
             fibreG: current.fibreG + (delta.fibreG ?? 0),
+            sugarG: current.sugarG + (delta.sugarG ?? 0),
+            saltG: current.saltG + (delta.saltG ?? 0),
             waterMl: current.waterMl + (delta.waterMl ?? 0),
           };
           return { logsByDate: { ...state.logsByDate, [date]: next } };
@@ -41,6 +43,16 @@ export const useNutritionLogStore = create<NutritionLogStore>()(
     {
       name: "rm-fitness-nutrition-logs",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as NutritionLogStore;
+        const logsByDate = state.logsByDate ?? {};
+        const patched: Record<string, MacroTotals> = {};
+        for (const [date, log] of Object.entries(logsByDate)) {
+          patched[date] = { ...EMPTY_TOTALS, ...log };
+        }
+        return { ...state, logsByDate: patched };
+      },
     }
   )
 );
