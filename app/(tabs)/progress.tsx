@@ -84,7 +84,7 @@ export default function ProgressScreen() {
 
   return (
     <ScreenContainer>
-      <Text className="text-text text-3xl font-bold my-4">Progress</Text>
+      <Text className="text-text text-3xl font-heading my-4">Progress</Text>
 
       <Card className="mb-4">
         <View className="flex-row justify-between items-center mb-2">

@@ -57,7 +57,7 @@ export default function WorkoutsScreen() {
 
   return (
     <ScreenContainer>
-      <Text className="text-text text-3xl font-bold my-4">Workouts</Text>
+      <Text className="text-text text-3xl font-heading my-4">Workouts</Text>
 
       {activeWorkout ? (
         <Pressable onPress={() => router.push(`/workouts/${activeWorkout.id}`)}>

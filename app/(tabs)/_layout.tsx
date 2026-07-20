@@ -1,18 +1,14 @@
 import { Tabs } from "expo-router";
 import { colors } from "@/theme/tokens";
-import { TabBarIcon } from "@/components/TabBarIcon";
+import { FloatingTabBar } from "@/components/FloatingTabBar";
 
 export default function TabsLayout() {
   return (
     <Tabs
+      tabBar={(props) => <FloatingTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-        },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen

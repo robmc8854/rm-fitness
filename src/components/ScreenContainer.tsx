@@ -6,7 +6,7 @@ export function ScreenContainer({ children, ...rest }: ScrollViewProps) {
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <ScrollView
         className="flex-1 px-4"
-        contentContainerStyle={{ paddingBottom: 32, paddingTop: 8 }}
+        contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}
         showsVerticalScrollIndicator={false}
         {...rest}
       >

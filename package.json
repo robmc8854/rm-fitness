@@ -41,7 +41,12 @@
     "expo-file-system": "~19.0.0",
     "react-native-url-polyfill": "^2.0.0",
     "zustand": "^4.5.2",
-    "expo-image-picker": "~17.0.0"
+    "expo-image-picker": "~17.0.0",
+    "expo-linear-gradient": "~14.0.0",
+    "expo-blur": "~14.0.0",
+    "expo-font": "~13.0.0",
+    "@expo-google-fonts/manrope": "^0.2.3",
+    "@expo-google-fonts/inter": "^0.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

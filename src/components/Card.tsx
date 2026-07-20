@@ -1,9 +1,24 @@
 import { View, ViewProps } from "react-native";
+import { colors, radius, shadow } from "@/theme/tokens";
 
-export function Card({ children, className = "", ...rest }: ViewProps & { className?: string }) {
+interface CardProps extends ViewProps {
+  className?: string;
+  variant?: "default" | "flat";
+}
+
+export function Card({ children, className = "", variant = "default", style, ...rest }: CardProps) {
   return (
     <View
-      className={`bg-surface border border-border rounded-card p-4 ${className}`}
+      className={`rounded-card p-4 ${className}`}
+      style={[
+        {
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
+        variant === "default" ? shadow.card : null,
+        style,
+      ]}
       {...rest}
     >
       {children}

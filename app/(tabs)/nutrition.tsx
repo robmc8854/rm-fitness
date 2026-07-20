@@ -54,7 +54,7 @@ export default function NutritionScreen() {
 
   return (
     <ScreenContainer>
-      <Text className="text-text text-3xl font-bold my-4">Nutrition</Text>
+      <Text className="text-text text-3xl font-heading my-4">Nutrition</Text>
 
       <Card className="mb-4">
         <Text className="text-textMuted text-sm mb-3">Today's Totals</Text>

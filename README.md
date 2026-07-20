@@ -151,6 +151,15 @@ fast loading, consistent styling, easy one-handed use, clear data
 visualisation. Design tokens live in `src/theme/tokens.ts` and are mirrored
 in `tailwind.config.js` for NativeWind classNames.
 
+## Visual design
+
+Custom typography (Manrope for headings, Inter for body — loaded via
+`@expo-google-fonts`), gradient hero/CTA cards (`expo-linear-gradient`),
+real elevation/shadow on cards, and a floating blurred pill tab bar
+(`expo-blur` + `src/components/FloatingTabBar.tsx`) instead of the default
+flat navigator bar. Design tokens for colors/gradients/shadows/fonts live in
+`src/theme/tokens.ts`.
+
 ## Deferred — needs your own accounts/API keys
 
 These are real features from the v2 spec that can't be built without
