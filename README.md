@@ -37,7 +37,16 @@ cp .env.example .env   # then fill in your Supabase project URL + anon key
 npm run start
 ```
 
-Requires the Expo Go app (or a dev build) to run on device/simulator.
+Requires the Expo Go app (or a dev build) to run on device/simulator. Expo
+Go auto-updates to the latest Expo SDK, so this project must track whatever
+SDK Expo Go currently supports — it's currently pinned to **SDK 54**
+(React Native 0.81, React 19.1, New Architecture, Reanimated 4 +
+react-native-worklets).
+
+If Metro reports a local address like `exp://127.0.0.1:8081` instead of your
+machine's real IP, your phone won't be able to reach it over Wi-Fi even on
+the same network — run `npx expo start --tunnel` instead, which routes
+through Expo's relay and works regardless of local network quirks.
 
 ## Project structure
 
