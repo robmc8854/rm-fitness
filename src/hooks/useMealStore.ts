@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Meal, MealIngredient, PlannedMeal } from "@/types";
+import { Meal, MealIngredient, MealCategory, PlannedMeal } from "@/types";
 import { MEAL_LIBRARY } from "@/data/mealLibrary";
 
 function generateId(): string {
@@ -12,6 +12,7 @@ const DEFAULT_FAVOURITE_IDS = new Set([
   "lib-chicken-rice-bowl",
   "lib-protein-oats",
   "lib-greek-yogurt-bowl",
+  "lib-salmon-sweet-potato",
 ]);
 
 function defaultMeals(): Meal[] {
@@ -19,6 +20,7 @@ function defaultMeals(): Meal[] {
     id: m.id,
     userId: "local",
     name: m.name,
+    category: m.category,
     calories: m.calories,
     proteinG: m.proteinG,
     carbsG: m.carbsG,
@@ -34,6 +36,7 @@ interface MealStore {
 
   addMeal: (input: {
     name: string;
+    category: MealCategory;
     calories: number;
     proteinG: number;
     carbsG: number;
@@ -60,6 +63,7 @@ export const useMealStore = create<MealStore>()(
           id,
           userId: "local",
           name: input.name,
+          category: input.category,
           calories: input.calories,
           proteinG: input.proteinG,
           carbsG: input.carbsG,
@@ -104,13 +108,31 @@ export const useMealStore = create<MealStore>()(
     {
       name: "rm-fitness-meals",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState) => {
         const state = persistedState as MealStore;
-        if (!state.meals || state.meals.length === 0) {
+        const existingMeals = state.meals ?? [];
+
+        if (existingMeals.length === 0) {
           return { ...state, meals: defaultMeals() };
         }
-        return state;
+
+        // Backfill category on meals saved before it existed (matching
+        // against the library by id where possible), and merge in any
+        // library meals this install doesn't have yet (new content added
+        // since they first launched) without touching their own custom meals.
+        const libraryById = new Map(MEAL_LIBRARY.map((m) => [m.id, m]));
+        const existingIds = new Set(existingMeals.map((m) => m.id));
+
+        const patched = existingMeals.map((m) => {
+          if (m.category) return m;
+          const libMatch = libraryById.get(m.id);
+          return { ...m, category: libMatch?.category ?? ("lunch" as const) };
+        });
+
+        const newLibraryMeals = defaultMeals().filter((m) => !existingIds.has(m.id));
+
+        return { ...state, meals: [...patched, ...newLibraryMeals] };
       },
     }
   )

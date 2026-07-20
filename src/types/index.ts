@@ -77,10 +77,13 @@ export interface MealIngredient {
   category: string; // e.g. Produce, Protein, Dairy, Pantry, Other
 }
 
+export type MealCategory = "breakfast" | "lunch" | "dinner" | "snack";
+
 export interface Meal {
   id: string;
   userId: string;
   name: string;
+  category: MealCategory;
   calories: number;
   proteinG: number;
   carbsG: number;

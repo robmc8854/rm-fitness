@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Text, View, Pressable, Modal } from "react-native";
 import { Stack } from "expo-router";
 import { ScreenContainer } from "@/components/ScreenContainer";
@@ -7,10 +7,19 @@ import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { useMealStore } from "@/hooks/useMealStore";
 import { colors } from "@/theme/tokens";
-import { MealIngredient } from "@/types";
+import { MealIngredient, MealCategory } from "@/types";
 import { todayKey } from "@/lib/nutrition";
 
 const INGREDIENT_CATEGORIES = ["Produce", "Protein", "Dairy", "Pantry", "Frozen", "Other"];
+
+const MEAL_CATEGORIES: { key: MealCategory; label: string }[] = [
+  { key: "breakfast", label: "Breakfast" },
+  { key: "lunch", label: "Lunch" },
+  { key: "dinner", label: "Dinner" },
+  { key: "snack", label: "Snack" },
+];
+
+type FilterKey = MealCategory | "all";
 
 export default function MealsScreen() {
   const meals = useMealStore((s) => s.meals);
@@ -20,8 +29,10 @@ export default function MealsScreen() {
   const planMeal = useMealStore((s) => s.planMeal);
   const plannedMeals = useMealStore((s) => s.plannedMeals);
 
+  const [filter, setFilter] = useState<FilterKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [name, setName] = useState("");
+  const [category, setCategory] = useState<MealCategory>("lunch");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
@@ -40,6 +51,7 @@ export default function MealsScreen() {
 
   function resetForm() {
     setName("");
+    setCategory("lunch");
     setCalories("");
     setProtein("");
     setCarbs("");
@@ -51,6 +63,7 @@ export default function MealsScreen() {
     if (!name.trim()) return;
     addMeal({
       name: name.trim(),
+      category,
       calories: parseInt(calories, 10) || 0,
       proteinG: parseInt(protein, 10) || 0,
       carbsG: parseInt(carbs, 10) || 0,
@@ -63,6 +76,20 @@ export default function MealsScreen() {
 
   const today = todayKey();
   const plannedToday = plannedMeals.filter((p) => p.date === today);
+
+  const filteredMeals = useMemo(
+    () => (filter === "all" ? meals : meals.filter((m) => m.category === filter)),
+    [meals, filter]
+  );
+
+  const groupedMeals = useMemo(() => {
+    if (filter !== "all") return { [filter]: filteredMeals };
+    return MEAL_CATEGORIES.reduce<Record<string, typeof meals>>((acc, c) => {
+      const inCat = meals.filter((m) => m.category === c.key);
+      if (inCat.length > 0) acc[c.key] = inCat;
+      return acc;
+    }, {});
+  }, [filteredMeals, filter, meals]);
 
   return (
     <>
@@ -86,37 +113,75 @@ export default function MealsScreen() {
 
         <Button label="+ Create New Meal" onPress={() => setCreateOpen(true)} />
 
-        <Text className="text-textMuted text-sm mt-6 mb-2">Saved Meals</Text>
-        {meals.length === 0 ? (
-          <Text className="text-text">No meals saved yet.</Text>
+        <View className="flex-row flex-wrap gap-2 mt-6 mb-2">
+          <Pressable onPress={() => setFilter("all")}>
+            <View
+              className="px-3 py-1.5 rounded-full border"
+              style={{
+                borderColor: filter === "all" ? colors.primary : colors.border,
+                backgroundColor: filter === "all" ? colors.primaryMuted : "transparent",
+              }}
+            >
+              <Text className="text-text text-xs">All ({meals.length})</Text>
+            </View>
+          </Pressable>
+          {MEAL_CATEGORIES.map((c) => {
+            const count = meals.filter((m) => m.category === c.key).length;
+            return (
+              <Pressable key={c.key} onPress={() => setFilter(c.key)}>
+                <View
+                  className="px-3 py-1.5 rounded-full border"
+                  style={{
+                    borderColor: filter === c.key ? colors.primary : colors.border,
+                    backgroundColor: filter === c.key ? colors.primaryMuted : "transparent",
+                  }}
+                >
+                  <Text className="text-text text-xs">{c.label} ({count})</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {Object.keys(groupedMeals).length === 0 ? (
+          <Text className="text-text mt-4">No meals in this category yet.</Text>
         ) : (
-          meals.map((m) => (
-            <Card key={m.id} className="mb-3">
-              <View className="flex-row justify-between items-start mb-1">
-                <Text className="text-text font-semibold flex-1">{m.name}</Text>
-                <Pressable onPress={() => toggleFavourite(m.id)}>
-                  <Text style={{ color: m.isFavourite ? colors.primary : colors.textMuted }}>
-                    {m.isFavourite ? "★ Favourite" : "☆ Favourite"}
-                  </Text>
-                </Pressable>
-              </View>
-              <Text className="text-textMuted text-xs mb-2">
-                {m.calories} kcal · P{m.proteinG}g · C{m.carbsG}g · F{m.fatG}g
-              </Text>
-              {m.ingredients.length > 0 && (
-                <Text className="text-textMuted text-xs mb-2">
-                  {m.ingredients.map((i) => i.name).join(", ")}
+          Object.entries(groupedMeals).map(([catKey, catMeals]) => (
+            <View key={catKey} className="mb-2">
+              {filter === "all" && (
+                <Text className="text-textMuted text-sm mt-4 mb-2 uppercase tracking-wide">
+                  {MEAL_CATEGORIES.find((c) => c.key === catKey)?.label ?? catKey}
                 </Text>
               )}
-              <View className="flex-row gap-3">
-                <Pressable onPress={() => planMeal(today, m.id)}>
-                  <Text className="text-primary text-sm">Plan for today</Text>
-                </Pressable>
-                <Pressable onPress={() => deleteMeal(m.id)}>
-                  <Text style={{ color: colors.danger, fontSize: 14 }}>Delete</Text>
-                </Pressable>
-              </View>
-            </Card>
+              {catMeals.map((m) => (
+                <Card key={m.id} className="mb-3">
+                  <View className="flex-row justify-between items-start mb-1">
+                    <Text className="text-text font-semibold flex-1">{m.name}</Text>
+                    <Pressable onPress={() => toggleFavourite(m.id)}>
+                      <Text style={{ color: m.isFavourite ? colors.primary : colors.textMuted }}>
+                        {m.isFavourite ? "★" : "☆"}
+                      </Text>
+                    </Pressable>
+                  </View>
+                  <Text className="text-textMuted text-xs mb-2">
+                    {m.calories} kcal · P{m.proteinG}g · C{m.carbsG}g · F{m.fatG}g
+                  </Text>
+                  {m.ingredients.length > 0 && (
+                    <Text className="text-textMuted text-xs mb-2">
+                      {m.ingredients.map((i) => i.name).join(", ")}
+                    </Text>
+                  )}
+                  <View className="flex-row gap-3">
+                    <Pressable onPress={() => planMeal(today, m.id)}>
+                      <Text className="text-primary text-sm">Plan for today</Text>
+                    </Pressable>
+                    <Pressable onPress={() => deleteMeal(m.id)}>
+                      <Text style={{ color: colors.danger, fontSize: 14 }}>Delete</Text>
+                    </Pressable>
+                  </View>
+                </Card>
+              ))}
+            </View>
           ))
         )}
       </ScreenContainer>
@@ -127,6 +192,24 @@ export default function MealsScreen() {
             <Text className="text-text text-xl font-bold mb-4 mt-2">New Meal</Text>
 
             <TextField label="Meal name" value={name} onChangeText={setName} placeholder="e.g. Chicken & Rice Bowl" />
+
+            <Text className="text-textMuted text-xs mb-2">Category</Text>
+            <View className="flex-row flex-wrap gap-2 mb-3">
+              {MEAL_CATEGORIES.map((c) => (
+                <Pressable key={c.key} onPress={() => setCategory(c.key)}>
+                  <View
+                    className="px-3 py-1.5 rounded-full border"
+                    style={{
+                      borderColor: category === c.key ? colors.primary : colors.border,
+                      backgroundColor: category === c.key ? colors.primaryMuted : "transparent",
+                    }}
+                  >
+                    <Text className="text-text text-xs">{c.label}</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+
             <View className="flex-row gap-3">
               <View className="flex-1">
                 <TextField label="Calories" value={calories} onChangeText={setCalories} keyboardType="numeric" />
