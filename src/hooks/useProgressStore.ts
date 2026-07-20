@@ -14,6 +14,7 @@ interface ProgressStore {
   logMeasurement: (input: {
     date: string;
     weightKg?: number | null;
+    bodyFatPct?: number | null;
     chestCm?: number | null;
     waistCm?: number | null;
     armsCm?: number | null;
@@ -26,7 +27,9 @@ interface ProgressStore {
   deletePhoto: (id: string) => void;
 
   latestWeight: () => number | null;
+  latestBodyFatPct: () => number | null;
   weightHistory: (limit?: number) => { date: string; weightKg: number }[];
+  bodyFatHistory: (limit?: number) => { date: string; bodyFatPct: number }[];
 }
 
 export const useProgressStore = create<ProgressStore>()(
@@ -41,6 +44,7 @@ export const useProgressStore = create<ProgressStore>()(
           userId: "local",
           date: input.date,
           weightKg: input.weightKg ?? null,
+          bodyFatPct: input.bodyFatPct ?? null,
           chestCm: input.chestCm ?? null,
           waistCm: input.waistCm ?? null,
           armsCm: input.armsCm ?? null,
@@ -80,6 +84,11 @@ export const useProgressStore = create<ProgressStore>()(
         return withWeight.length > 0 ? withWeight[0].weightKg : null;
       },
 
+      latestBodyFatPct: () => {
+        const withBf = get().measurements.filter((m) => m.bodyFatPct != null);
+        return withBf.length > 0 ? withBf[0].bodyFatPct : null;
+      },
+
       weightHistory: (limit = 12) => {
         return get()
           .measurements.filter((m) => m.weightKg != null)
@@ -87,10 +96,29 @@ export const useProgressStore = create<ProgressStore>()(
           .reverse()
           .map((m) => ({ date: m.date, weightKg: m.weightKg as number }));
       },
+
+      bodyFatHistory: (limit = 12) => {
+        return get()
+          .measurements.filter((m) => m.bodyFatPct != null)
+          .slice(0, limit)
+          .reverse()
+          .map((m) => ({ date: m.date, bodyFatPct: m.bodyFatPct as number }));
+      },
     }),
     {
       name: "rm-fitness-progress",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as ProgressStore;
+        return {
+          ...state,
+          measurements: (state.measurements ?? []).map((m) => ({
+            ...m,
+            bodyFatPct: m.bodyFatPct ?? null,
+          })),
+        };
+      },
     }
   )
 );

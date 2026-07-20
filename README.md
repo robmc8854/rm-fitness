@@ -107,15 +107,21 @@ Also local-first via Zustand + AsyncStorage.
 
 Also local-first via Zustand + AsyncStorage.
 
-- Body measurement logging (weight, chest, waist, arms, legs, shoulders),
-  one entry per date, replacing same-day entries rather than duplicating
+- Body measurement logging (weight, body fat %, chest, waist, arms, legs,
+  shoulders), one entry per date, replacing same-day entries rather than
+  duplicating
 - Weight trend chart (Victory Native) shared between Dashboard and Progress
 - Strength section pulls live 1RM PRs from workout history — no duplicate
   data entry between Workouts and Progress
 - Progress photos via device camera (front/side/back), stored as local file
   URIs pending Supabase Storage upload wiring
-- Dashboard now pulls real data throughout: today's workout, macro/water
-  totals, live workout streak, and latest weight — no more placeholders
+- **Statistics & Achievements** (`src/lib/stats.ts`, `app/progress/stats.tsx`):
+  workout streak, workouts-per-week average, calories/protein this week,
+  bodyweight trend delta, muscle groups trained (by set count), favourite
+  exercises, and a 7-badge achievement system (First Workout, 10/50
+  Workouts, 7/30-Day Streak, First PR, 4-Week Consistency)
+- Dashboard pulls real data throughout: today's workout, macro/water totals,
+  live workout streak, and latest weight — no more placeholders
 
 ## AI Coach (Phase 5)
 
@@ -144,3 +150,22 @@ Dark theme first, smooth animations, large touch targets, simple navigation,
 fast loading, consistent styling, easy one-handed use, clear data
 visualisation. Design tokens live in `src/theme/tokens.ts` and are mirrored
 in `tailwind.config.js` for NativeWind classNames.
+
+## Deferred — needs your own accounts/API keys
+
+These are real features from the v2 spec that can't be built without
+external services under your own account. Code isn't written for these yet;
+flagging so they're not mistaken for oversights:
+
+- **Face ID / Touch ID** — buildable now with `expo-local-authentication`,
+  just hasn't been done yet
+- **Apple Health integration** — needs a paid Apple Developer account +
+  HealthKit entitlement configured in EAS/Xcode
+- **Barcode scanning + food database** — needs a real food database API
+  (Open Food Facts is free; FatSecret/Nutritionix are paid) and an API key
+- **Google Sign In** — needs a Google Cloud OAuth client under your account
+- **Exercise videos/animations** — needs real video/animation assets, can't
+  be generated
+- **Premium subscriptions/payments** — needs RevenueCat or App Store Connect
+  in-app purchases configured under your developer account
+- **Community features** — explicitly marked "Future" in the spec itself

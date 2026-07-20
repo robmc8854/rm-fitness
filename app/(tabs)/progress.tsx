@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Text, View, Pressable, Modal, Image } from "react-native";
+import { Link } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Card } from "@/components/Card";
@@ -41,6 +42,7 @@ export default function ProgressScreen() {
 
   const [logOpen, setLogOpen] = useState(false);
   const [weight, setWeight] = useState("");
+  const [bodyFat, setBodyFat] = useState("");
   const [chest, setChest] = useState("");
   const [waist, setWaist] = useState("");
   const [arms, setArms] = useState("");
@@ -51,13 +53,14 @@ export default function ProgressScreen() {
     logMeasurement({
       date: todayKey(),
       weightKg: weight ? parseFloat(weight) : null,
+      bodyFatPct: bodyFat ? parseFloat(bodyFat) : null,
       chestCm: chest ? parseFloat(chest) : null,
       waistCm: waist ? parseFloat(waist) : null,
       armsCm: arms ? parseFloat(arms) : null,
       legsCm: legs ? parseFloat(legs) : null,
       shouldersCm: shoulders ? parseFloat(shoulders) : null,
     });
-    setWeight(""); setChest(""); setWaist(""); setArms(""); setLegs(""); setShoulders("");
+    setWeight(""); setBodyFat(""); setChest(""); setWaist(""); setArms(""); setLegs(""); setShoulders("");
     setLogOpen(false);
   }
 
@@ -95,7 +98,22 @@ export default function ProgressScreen() {
 
       <Button label="+ Log Measurements" onPress={() => setLogOpen(true)} />
 
-      <View className="flex-row flex-wrap gap-3 my-4">
+      <View className="flex-row gap-3 my-4">
+        <Card className="flex-1 items-center py-3">
+          <Text className="text-textMuted text-xs">Weight</Text>
+          <Text className="text-text text-sm font-semibold">
+            {latest?.weightKg != null ? `${latest.weightKg} kg` : "— kg"}
+          </Text>
+        </Card>
+        <Card className="flex-1 items-center py-3">
+          <Text className="text-textMuted text-xs">Body Fat</Text>
+          <Text className="text-text text-sm font-semibold">
+            {latest?.bodyFatPct != null ? `${latest.bodyFatPct}%` : "—"}
+          </Text>
+        </Card>
+      </View>
+
+      <View className="flex-row flex-wrap gap-3 mb-4">
         {MEASUREMENT_FIELDS.map(({ key, label }) => (
           <Card key={key} className="w-[30%] items-center py-3">
             <Text className="text-textMuted text-xs">{label}</Text>
@@ -105,6 +123,15 @@ export default function ProgressScreen() {
           </Card>
         ))}
       </View>
+
+      <Link href="/progress/stats" asChild>
+        <Pressable>
+          <Card className="mb-4">
+            <Text className="text-textMuted text-sm mb-1">Statistics & Achievements</Text>
+            <Text className="text-primary">Streaks, training frequency, badges →</Text>
+          </Card>
+        </Pressable>
+      </Link>
 
       <Card className="mb-4">
         <Text className="text-textMuted text-sm mb-2">Strength — Estimated 1RM</Text>
@@ -157,6 +184,7 @@ export default function ProgressScreen() {
           <ScreenContainer>
             <Text className="text-text text-xl font-bold mb-4 mt-2">Log Measurements</Text>
             <TextField label="Weight (kg)" value={weight} onChangeText={setWeight} keyboardType="numeric" />
+            <TextField label="Body Fat %" value={bodyFat} onChangeText={setBodyFat} keyboardType="numeric" />
             <TextField label="Chest (cm)" value={chest} onChangeText={setChest} keyboardType="numeric" />
             <TextField label="Waist (cm)" value={waist} onChangeText={setWaist} keyboardType="numeric" />
             <TextField label="Arms (cm)" value={arms} onChangeText={setArms} keyboardType="numeric" />
