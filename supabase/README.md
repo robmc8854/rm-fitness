@@ -28,6 +28,26 @@ to service role only.
 
 - `progress-photos` — private bucket, per-user folder, signed URLs only.
 
+## Edge Functions
+
+### `ai-coach`
+
+Proxies AI Coach requests to the Anthropic API. Keeps the API key server-side
+— the mobile app never has direct access to it.
+
+Deploy and configure:
+
+```bash
+supabase functions deploy ai-coach
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+```
+
+The client calls this via `supabase.functions.invoke("ai-coach", { body: { context } })`
+(see `src/lib/aiCoach.ts`). Requires the user to be authenticated, since
+Supabase forwards the Authorization header automatically — once real auth
+(Phase 1 stub) is wired up, add a check in the function for a valid session
+if you want to restrict access further.
+
 ## Setup
 
 1. Create a Supabase project.

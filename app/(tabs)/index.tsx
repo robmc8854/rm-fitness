@@ -6,6 +6,7 @@ import { WeightChart } from "@/components/WeightChart";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
 import { useNutritionLogStore } from "@/hooks/useNutritionLogStore";
 import { useProgressStore } from "@/hooks/useProgressStore";
+import { useCoachSummaryStore } from "@/hooks/useCoachSummaryStore";
 import { computeWorkoutStreak } from "@/lib/training";
 import { DEFAULT_TARGETS, todayKey } from "@/lib/nutrition";
 
@@ -19,6 +20,7 @@ export default function DashboardScreen() {
 
   const latestWeight = useProgressStore((s) => s.latestWeight());
   const weightHistory = useProgressStore((s) => s.weightHistory(8));
+  const lastCoachSummary = useCoachSummaryStore((s) => s.lastSummary);
 
   return (
     <ScreenContainer>
@@ -75,12 +77,17 @@ export default function DashboardScreen() {
         <WeightChart data={weightHistory} />
       </Card>
 
-      <Card className="mb-4">
-        <Text className="text-textMuted text-sm mb-1">AI Summary</Text>
-        <Text className="text-text">
-          Your AI Coach summary will appear here once the coaching module is wired up (Phase 5).
-        </Text>
-      </Card>
+      <Link href="/coach" asChild>
+        <Pressable>
+          <Card className="mb-4">
+            <Text className="text-textMuted text-sm mb-1">AI Summary</Text>
+            <Text className="text-text" numberOfLines={3}>
+              {lastCoachSummary ??
+                "Get a personalised coaching summary based on your training and nutrition →"}
+            </Text>
+          </Card>
+        </Pressable>
+      </Link>
 
       <Card>
         <Text className="text-textMuted text-sm mb-1">Daily Motivation</Text>

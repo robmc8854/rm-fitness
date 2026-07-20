@@ -26,7 +26,7 @@ and visually consistent from day one.
 | 2 | Workout system (plans, tracking, PRs, history) | ✅ local-first (Supabase sync pending) |
 | 3 | Nutrition + shopping | ✅ local-first (Supabase sync pending) |
 | 4 | Progress tracking, charts, photos | ✅ local-first (Supabase sync pending) |
-| 5 | AI Coach | ⏳ not started |
+| 5 | AI Coach | ✅ built (needs Supabase project + Anthropic key to run) |
 | 6 | Testing, optimisation, TestFlight, App Store prep | ⏳ not started |
 
 ## Getting started
@@ -99,6 +99,27 @@ Also local-first via Zustand + AsyncStorage.
   URIs pending Supabase Storage upload wiring
 - Dashboard now pulls real data throughout: today's workout, macro/water
   totals, live workout streak, and latest weight — no more placeholders
+
+## AI Coach (Phase 5)
+
+The only module that needs a live backend to actually run, since it makes a
+real LLM call rather than working from local state alone.
+
+- **Architecture:** app → Supabase Edge Function (`supabase/functions/ai-coach`)
+  → Anthropic API. The API key lives only in Supabase secrets, never in the
+  app bundle.
+- App builds a compact context object (`src/lib/coachContext.ts`) from real
+  local data: recent completed workouts + volume, current PRs, weight trend,
+  last 7 days of nutrition logs. No full history is ever sent — just summarised numbers.
+- The model returns a short (150–220 word) coaching summary covering
+  plateau/progress reads, one concrete recommendation, a nutrition note if
+  the data supports it, and a closing line of motivation.
+- Last summary is cached locally (`useCoachSummaryStore`) so it's visible on
+  both the Dashboard and Coach screen even offline, until regenerated.
+
+**To make this live:** deploy the Edge Function and set the
+`ANTHROPIC_API_KEY` secret — see `supabase/README.md` for the exact commands.
+Until then, the Coach screen surfaces a clear error rather than failing silently.
 
 ## Design philosophy
 
