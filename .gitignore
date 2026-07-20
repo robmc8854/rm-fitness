@@ -1,0 +1,40 @@
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Env
+.env
+.env.local
+
+# macOS
+.DS_Store
+
+# Xcode
+ios/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+
+# Android
+android/
+*.apk
+*.aab
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Editor
+.vscode/
+.idea/

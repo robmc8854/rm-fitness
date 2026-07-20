@@ -1,0 +1,67 @@
+# RM Fitness
+
+A premium, AI-assisted fitness app — training programmes, workout tracking,
+nutrition planning, shopping lists, progress tracking, and an AI coach — built
+as a single modern replacement for a stack of separate fitness apps.
+
+## Tech stack
+
+- **Frontend:** React Native, Expo SDK 51, TypeScript, Expo Router, NativeWind
+- **Backend:** Supabase (Postgres, Auth, Storage)
+- **State/data:** TanStack Query
+- **Charts:** Victory Native
+- **Auth:** Email, Apple Sign In (Google Sign In planned)
+- **Deployment:** Expo EAS Build → TestFlight → App Store / Google Play
+
+## Project status
+
+This is the **Phase 1** scaffold: project setup, navigation, theme, and a
+placeholder screen for every module in the spec. No backend logic is wired
+up yet — screens render static/empty states so the whole app is navigable
+and visually consistent from day one.
+
+| Phase | Scope | Status |
+|---|---|---|
+| 1 | Project setup, navigation, auth shell, dashboard, theme | ✅ scaffolded |
+| 2 | Workout system (plans, tracking, PRs, history) | ⏳ not started |
+| 3 | Nutrition + shopping | ⏳ not started |
+| 4 | Progress tracking, charts, photos | ⏳ not started |
+| 5 | AI Coach | ⏳ not started |
+| 6 | Testing, optimisation, TestFlight, App Store prep | ⏳ not started |
+
+## Getting started
+
+```bash
+npm install
+cp .env.example .env   # then fill in your Supabase project URL + anon key
+npm run start
+```
+
+Requires the Expo Go app (or a dev build) to run on device/simulator.
+
+## Project structure
+
+```
+app/                  Expo Router routes (file-based navigation)
+  (tabs)/             Dashboard, Workouts, Nutrition, Progress, Profile
+  auth/                Sign in
+  shopping/            Shopping list
+  coach/               AI Coach
+  settings/            Settings
+src/
+  components/          Shared UI primitives (Card, ScreenContainer, ...)
+  lib/                 Supabase client, TanStack Query client
+  theme/               Design tokens (colors, spacing, radius)
+  types/               Shared domain types
+  hooks/               (empty — Phase 2+)
+  constants/           (empty — Phase 2+)
+supabase/
+  README.md            Schema plan + RLS notes for the Supabase backend
+```
+
+## Design philosophy
+
+Dark theme first, smooth animations, large touch targets, simple navigation,
+fast loading, consistent styling, easy one-handed use, clear data
+visualisation. Design tokens live in `src/theme/tokens.ts` and are mirrored
+in `tailwind.config.js` for NativeWind classNames.
