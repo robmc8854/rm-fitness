@@ -4,8 +4,10 @@ import { ScreenContainer } from "@/components/ScreenContainer";
 import { Card } from "@/components/Card";
 import { useNutritionLogStore } from "@/hooks/useNutritionLogStore";
 import { useMealStore } from "@/hooks/useMealStore";
+import { WeeklyBarChart } from "@/components/WeeklyBarChart";
+import { MacroDonut } from "@/components/MacroDonut";
 import { DEFAULT_TARGETS, pctOfTarget, todayKey } from "@/lib/nutrition";
-import { colors } from "@/theme/tokens";
+import { colors, fonts } from "@/theme/tokens";
 
 function MacroRow({ label, value, target, unit }: { label: string; value: number; target: number; unit: string }) {
   const pct = pctOfTarget(value, target);
@@ -31,9 +33,17 @@ export default function NutritionScreen() {
   const today = todayKey();
   const log = useNutritionLogStore((s) => s.getLog(today));
   const addToLog = useNutritionLogStore((s) => s.addToLog);
+  const getLog = useNutritionLogStore((s) => s.getLog);
   const meals = useMealStore((s) => s.meals);
 
   const favouriteMeals = meals.filter((m) => m.isFavourite).slice(0, 3);
+
+  const last7DaysCalories = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const key = d.toISOString().slice(0, 10);
+    return { label: d.toLocaleDateString(undefined, { weekday: "narrow" }), value: getLog(key).calories };
+  });
 
   function quickAddMeal(mealId: string) {
     const meal = meals.find((m) => m.id === mealId);
@@ -57,6 +67,13 @@ export default function NutritionScreen() {
       <Text className="text-text text-3xl font-heading my-4">Nutrition</Text>
 
       <Card className="mb-4">
+        <Text style={{ color: colors.textMuted, fontFamily: fonts.bodyMedium, fontSize: 13, marginBottom: 4 }}>
+          Today's Macro Split
+        </Text>
+        <MacroDonut proteinG={log.proteinG} carbsG={log.carbsG} fatG={log.fatG} />
+      </Card>
+
+      <Card className="mb-4">
         <Text className="text-textMuted text-sm mb-3">Today's Totals</Text>
         <MacroRow label="Calories" value={log.calories} target={DEFAULT_TARGETS.calories} unit="" />
         <MacroRow label="Protein" value={log.proteinG} target={DEFAULT_TARGETS.proteinG} unit="g" />
@@ -65,6 +82,13 @@ export default function NutritionScreen() {
         <MacroRow label="Sugar" value={log.sugarG} target={DEFAULT_TARGETS.sugarG} unit="g" />
         <MacroRow label="Salt" value={log.saltG} target={DEFAULT_TARGETS.saltG} unit="g" />
         <MacroRow label="Water" value={log.waterMl} target={DEFAULT_TARGETS.waterMl} unit="ml" />
+      </Card>
+
+      <Card className="mb-4">
+        <Text style={{ color: colors.textMuted, fontFamily: fonts.bodyMedium, fontSize: 13, marginBottom: 4 }}>
+          Weekly Calorie Trend
+        </Text>
+        <WeeklyBarChart data={last7DaysCalories} />
       </Card>
 
       <Card className="mb-4">

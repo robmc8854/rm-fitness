@@ -14,6 +14,12 @@ const SPLITS: { key: WorkoutSplit; label: string }[] = [
   { key: "push_pull_legs", label: "Push/Pull/Legs" },
   { key: "upper_lower", label: "Upper/Lower" },
   { key: "full_body", label: "Full Body" },
+  { key: "bro_split", label: "Bro Split" },
+  { key: "powerbuilding", label: "Powerbuilding" },
+  { key: "strength", label: "Strength" },
+  { key: "hypertrophy", label: "Hypertrophy" },
+  { key: "fat_loss", label: "Fat Loss" },
+  { key: "bodyweight", label: "Bodyweight / Home" },
   { key: "custom", label: "Custom" },
 ];
 

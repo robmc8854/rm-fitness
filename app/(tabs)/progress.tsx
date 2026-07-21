@@ -7,9 +7,10 @@ import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { WeightChart } from "@/components/WeightChart";
+import { VolumeTrendChart } from "@/components/VolumeTrendChart";
 import { useProgressStore } from "@/hooks/useProgressStore";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
-import { computePRs } from "@/lib/training";
+import { computePRs, workoutVolume } from "@/lib/training";
 import { getExerciseById } from "@/data/exercises";
 import { todayKey } from "@/lib/nutrition";
 import { colors } from "@/theme/tokens";
@@ -37,6 +38,15 @@ export default function ProgressScreen() {
   const topPRs = Object.values(prs)
     .sort((a, b) => b.bestEstimated1RM - a.bestEstimated1RM)
     .slice(0, 5);
+
+  const volumeTrend = workouts
+    .filter((w) => w.completedAt)
+    .sort((a, b) => (a.completedAt! > b.completedAt! ? 1 : -1))
+    .slice(-8)
+    .map((w) => ({
+      label: new Date(w.completedAt!).toLocaleDateString(undefined, { day: "numeric", month: "numeric" }),
+      volumeKg: workoutVolume(w),
+    }));
 
   const latest = measurements[0];
 
@@ -148,6 +158,11 @@ export default function ProgressScreen() {
             );
           })
         )}
+      </Card>
+
+      <Card className="mb-4">
+        <Text className="text-textMuted text-sm mb-2">Training Volume Trend</Text>
+        <VolumeTrendChart data={volumeTrend} />
       </Card>
 
       <Card>

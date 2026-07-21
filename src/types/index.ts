@@ -22,13 +22,33 @@ export interface UserProfile {
   createdAt: string;
 }
 
-export type WorkoutSplit = "push_pull_legs" | "upper_lower" | "full_body" | "custom";
+export type WorkoutSplit =
+  | "push_pull_legs"
+  | "upper_lower"
+  | "full_body"
+  | "bro_split"
+  | "powerbuilding"
+  | "strength"
+  | "hypertrophy"
+  | "fat_loss"
+  | "bodyweight"
+  | "custom";
+
+export type Equipment =
+  | "barbell" | "dumbbell" | "machine" | "cable" | "bodyweight"
+  | "kettlebell" | "resistance_band" | "bench";
+export type Difficulty = "beginner" | "intermediate" | "advanced";
 
 export interface Exercise {
   id: string;
   name: string;
   muscleGroup: string;
+  secondaryMuscles: string[];
+  equipment: Equipment;
+  difficulty: Difficulty;
   instructions: string;
+  commonMistakes: string[];
+  alternatives: string[]; // exercise ids
   imageUrl: string | null;
 }
 

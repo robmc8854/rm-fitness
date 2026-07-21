@@ -151,6 +151,22 @@ fast loading, consistent styling, easy one-handed use, clear data
 visualisation. Design tokens live in `src/theme/tokens.ts` and are mirrored
 in `tailwind.config.js` for NativeWind classNames.
 
+## Content depth
+
+- **Exercise database**: 55 exercises (up from 18) across chest, back,
+  shoulders, arms, legs, core, and conditioning — each with secondary
+  muscles worked, equipment type, difficulty rating, common mistakes, and
+  cross-referenced alternatives. Exercise Library screen shows all of it,
+  expandable per exercise.
+- **10 training programme types** (`src/data/workoutTemplates.ts`): Push/
+  Pull/Legs, Upper/Lower, Full Body, Bro Split, Powerbuilding, Strength,
+  Hypertrophy, Fat Loss, Bodyweight/Home, and Custom — 20+ real day
+  templates total, not just category placeholders.
+- **Nutrition charts**: today's macro split as a donut chart, plus a 7-day
+  calorie trend bar chart, both on the main Nutrition tab.
+- **Progress charts**: training volume trend across recent completed
+  workouts, alongside the existing weight trend.
+
 ## Visual design
 
 Custom typography (Manrope for headings, Inter for body — loaded via
